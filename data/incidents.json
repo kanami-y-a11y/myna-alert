@@ -1,0 +1,388 @@
+{
+  "meta": {
+    "lastUpdated": "2026-08-10T13:00:00+09:00",
+    "version": "2.0",
+    "totalCount": 8,
+    "unresolvedCount": 7
+  },
+  "incidents": [
+    {
+      "id": "2026-osaka-sakai-001",
+      "title": "マイナ保険証の資格確認で別人の情報が表示される事象",
+      "orgName": "堺市",
+      "orgType": "municipality",
+      "prefecture": "大阪府",
+      "municipality": "堺市",
+      "insuranceTypes": ["国民健康保険", "後期高齢者医療"],
+      "categories": ["マイナ保険証", "オンライン資格確認", "誤表示", "資格情報の誤り"],
+      "status": "調査中",
+      "occurredAt": "2026-08-10",
+      "firstPublishedAt": "2026-08-10",
+      "recoveredAt": null,
+      "lastUpdatedAt": "2026-08-10",
+      "lastCheckedAt": "2026-08-10",
+      "summary": "市内医療機関においてオンライン資格確認端末を操作した際、操作した被保険者とは異なる者の被保険者情報が表示される事例が報告された。",
+      "currentSituation": "堺市が調査中。詳細は未公表。",
+      "cause": null,
+      "confirmedFacts": [
+        "市内医療機関でオンライン資格確認時に別人の情報が表示された",
+        "堺市が事象を確認し公表した"
+      ],
+      "uncertaintyNote": "原因・影響件数・対象者範囲はいずれも公表情報では確認できない。「システム障害」とは断定できない。",
+      "potentialCount": null,
+      "confirmedCount": null,
+      "refund": { "exists": false, "count": null, "amount": null, "status": null },
+      "unresolvedItems": ["原因特定", "影響件数確認", "復旧確認", "再発防止策"],
+      "updates": [
+        {
+          "id": "2026-osaka-sakai-001-u001",
+          "type": "NEW",
+          "publishedAt": "2026-08-10",
+          "title": "オンライン資格確認で別人情報表示を確認",
+          "summary": "市内医療機関においてオンライン資格確認端末を操作した際、本人とは異なる被保険者情報が表示される事例を確認したと堺市が公表。",
+          "diffFromPrevious": null,
+          "statusAfterUpdate": "調査中",
+          "newFacts": ["別人情報表示を確認", "堺市が公表"],
+          "sources": [
+            {
+              "sourceType": "municipality",
+              "publisher": "堺市",
+              "title": "オンライン資格確認における別人情報表示について",
+              "url": "",
+              "publishedAt": "2026-08-10",
+              "isPrimary": true,
+              "reliabilityLevel": 1
+            }
+          ]
+        }
+      ],
+      "createdAt": "2026-08-10",
+      "updatedAt": "2026-08-10"
+    },
+    {
+      "id": "2026-aomori-hirosaki-001",
+      "title": "マイナ保険証への切替案内の誤送付（約400世帯）",
+      "orgName": "弘前市",
+      "orgType": "municipality",
+      "prefecture": "青森県",
+      "municipality": "弘前市",
+      "insuranceTypes": ["国民健康保険"],
+      "categories": ["マイナ保険証", "誤送付", "国民健康保険", "窓口業務影響"],
+      "status": "対応中",
+      "occurredAt": "2026-08-09",
+      "firstPublishedAt": "2026-08-09",
+      "recoveredAt": null,
+      "lastUpdatedAt": "2026-08-09",
+      "lastCheckedAt": "2026-08-10",
+      "summary": "マイナ保険証への切替案内を、すでにマイナ保険証を取得済みの約400世帯に誤って送付した。",
+      "currentSituation": "誤送付を確認。対象者への対応方法を検討中。",
+      "cause": "送付対象者リストの絞り込みミス（推定）",
+      "confirmedFacts": [
+        "マイナ保険証取得済みの約400世帯に切替案内を誤送付",
+        "弘前市国保が事象を確認し公表"
+      ],
+      "uncertaintyNote": "原因の詳細（リスト作成ミスかシステム起因か）は公表情報では確認できない。",
+      "potentialCount": 400,
+      "confirmedCount": null,
+      "refund": { "exists": false, "count": null, "amount": null, "status": null },
+      "unresolvedItems": ["対象者への謝罪・説明対応", "原因の確定と公表", "再発防止策"],
+      "updates": [
+        {
+          "id": "2026-aomori-hirosaki-001-u001",
+          "type": "NEW",
+          "publishedAt": "2026-08-09",
+          "title": "マイナ保険証切替案内を約400世帯に誤送付",
+          "summary": "マイナ保険証への切替案内を、すでに取得済みの約400世帯に重複して送付したことを弘前市が公表。",
+          "diffFromPrevious": null,
+          "statusAfterUpdate": "対応中",
+          "newFacts": ["取得済み約400世帯に誤送付", "弘前市が公表"],
+          "sources": [
+            {
+              "sourceType": "municipality",
+              "publisher": "弘前市",
+              "title": "マイナ保険証切替案内の誤送付について",
+              "url": "",
+              "publishedAt": "2026-08-09",
+              "isPrimary": true,
+              "reliabilityLevel": 1
+            }
+          ]
+        }
+      ],
+      "createdAt": "2026-08-09",
+      "updatedAt": "2026-08-09"
+    },
+    {
+      "id": "2026-niigata-joetsu-001",
+      "title": "オンライン資格確認で負担割合・限度額区分が誤表示",
+      "orgName": "上越市",
+      "orgType": "municipality",
+      "prefecture": "新潟県",
+      "municipality": "上越市",
+      "insuranceTypes": ["国民健康保険", "後期高齢者医療"],
+      "categories": ["オンライン資格確認", "負担割合", "限度額区分", "誤表示", "返金", "データ連携不備"],
+      "status": "返金対応中",
+      "occurredAt": "2026-08-04",
+      "firstPublishedAt": "2026-08-04",
+      "recoveredAt": "2026-08-06",
+      "lastUpdatedAt": "2026-08-07",
+      "lastCheckedAt": "2026-08-10",
+      "summary": "オンライン資格確認において、一部の被保険者の負担割合・限度額適用区分が正しく表示されない事象が発生。8月6日に復旧見込みが示され、差額返金対応が発表された。",
+      "currentSituation": "修正作業実施済み。差額返金の対応方法を関係機関と調整中。",
+      "cause": "資格情報の一部が最新状態に更新されていなかった（市から送信したデータの反映不備）",
+      "confirmedFacts": [
+        "8月4日に負担割合・限度額区分の誤表示を確認",
+        "8月4日〜5日に修正作業を実施",
+        "8月6日に正しい情報が反映される見込みと公表",
+        "差額返金対応を実施することを公表"
+      ],
+      "uncertaintyNote": "返金対象の確定件数・返金総額は続報待ち。「全件復旧」の正式確認は続報待ち。",
+      "potentialCount": null,
+      "confirmedCount": null,
+      "refund": { "exists": true, "count": null, "amount": null, "status": "対応方法調整中" },
+      "unresolvedItems": ["返金対象件数の確定", "返金総額の確定", "再発防止策の公表"],
+      "updates": [
+        {
+          "id": "2026-niigata-joetsu-001-u001",
+          "type": "NEW",
+          "publishedAt": "2026-08-04",
+          "title": "オンライン資格確認で負担割合・限度額区分が正しく表示されない",
+          "summary": "市内医療機関等でのオンライン資格確認において、一部の被保険者の負担割合・限度額適用区分が正しく表示されない事象が発生。原因調査・修正作業を開始した。",
+          "diffFromPrevious": null,
+          "statusAfterUpdate": "調査中",
+          "newFacts": ["負担割合・限度額区分の誤表示を確認", "原因調査開始"],
+          "sources": [
+            {
+              "sourceType": "municipality",
+              "publisher": "上越市",
+              "title": "オンライン資格確認における表示誤りについて",
+              "url": "",
+              "publishedAt": "2026-08-04",
+              "isPrimary": true,
+              "reliabilityLevel": 1
+            }
+          ]
+        },
+        {
+          "id": "2026-niigata-joetsu-001-u002",
+          "type": "UPDATE",
+          "publishedAt": "2026-08-06",
+          "title": "8月6日に正しい情報が反映される見込み・差額返金を発表",
+          "summary": "修正作業を経て、8月6日中に正しい情報が反映される見込みとなった。また、誤表示により生じた差額について返金対応を実施すると発表した。",
+          "diffFromPrevious": "8月4日時点では修正作業中・影響範囲調査中だったが、8月6日時点で「復旧見込み」と「差額返金実施」が明示された。",
+          "statusAfterUpdate": "復旧見込み",
+          "newFacts": ["8月6日に正しい情報反映の見込み", "差額返金の実施を発表"],
+          "sources": [
+            {
+              "sourceType": "municipality",
+              "publisher": "上越市",
+              "title": "オンライン資格確認表示誤りの対応状況について",
+              "url": "",
+              "publishedAt": "2026-08-06",
+              "isPrimary": true,
+              "reliabilityLevel": 1
+            },
+            {
+              "sourceType": "news_local",
+              "publisher": "上越タウンジャーナル",
+              "title": "上越市のオンライン資格確認誤り、差額返金へ",
+              "url": "",
+              "publishedAt": "2026-08-06",
+              "isPrimary": false,
+              "reliabilityLevel": 3
+            }
+          ]
+        },
+        {
+          "id": "2026-niigata-joetsu-001-u003",
+          "type": "RECOVERY",
+          "publishedAt": "2026-08-07",
+          "title": "修正完了。返金対象件数・金額は調査継続",
+          "summary": "オンライン資格確認の表示内容の修正が完了した。返金対象の件数・金額については引き続き調査中。",
+          "diffFromPrevious": "「復旧見込み」から「修正完了」へ更新。ただし返金対象件数・金額は未確定のまま。",
+          "statusAfterUpdate": "返金対応中",
+          "newFacts": ["修正作業完了", "オンライン資格確認への正しい情報の反映を確認"],
+          "sources": [
+            {
+              "sourceType": "municipality",
+              "publisher": "上越市",
+              "title": "オンライン資格確認表示誤りの修正完了について",
+              "url": "",
+              "publishedAt": "2026-08-07",
+              "isPrimary": true,
+              "reliabilityLevel": 1
+            }
+          ]
+        }
+      ],
+      "createdAt": "2026-08-04",
+      "updatedAt": "2026-08-07"
+    },
+    {
+      "id": "2026-fukuoka-kurume-001",
+      "title": "後期高齢者医療システムの臨時停止で窓口業務に影響",
+      "orgName": "久留米市",
+      "orgType": "municipality",
+      "prefecture": "福岡県",
+      "municipality": "久留米市",
+      "insuranceTypes": ["後期高齢者医療"],
+      "categories": ["後期高齢者医療", "臨時停止", "窓口業務影響", "資格確認書", "システム停止"],
+      "status": "調査中",
+      "occurredAt": null,
+      "firstPublishedAt": "2026-08-08",
+      "recoveredAt": null,
+      "lastUpdatedAt": "2026-08-08",
+      "lastCheckedAt": "2026-08-10",
+      "summary": "後期高齢者医療に係るシステムを臨時停止。停止中は窓口での資格確認書等の発行ができず、システム照会が必要な問い合わせへの回答もできない状況となった。",
+      "currentSituation": "臨時停止中。停止理由（障害・計画停止・その他）は公表文では確認できない。",
+      "cause": null,
+      "confirmedFacts": [
+        "後期高齢者医療システムを臨時停止",
+        "臨時停止中は窓口で資格確認書等を発行できない",
+        "システム照会が必要な問い合わせに回答できない"
+      ],
+      "uncertaintyNote": "公表文に「システム障害」との記載はない。計画停止・メンテナンス・障害等の理由は公表情報では確認できない。",
+      "potentialCount": null,
+      "confirmedCount": null,
+      "refund": { "exists": false, "count": null, "amount": null, "status": null },
+      "unresolvedItems": ["臨時停止の理由確認", "復旧時期確認", "影響件数確認"],
+      "updates": [
+        {
+          "id": "2026-fukuoka-kurume-001-u001",
+          "type": "NOTICE",
+          "publishedAt": "2026-08-08",
+          "title": "後期高齢者医療システム臨時停止・窓口業務に影響",
+          "summary": "後期高齢者医療に係るシステムを臨時停止。停止期間中、窓口での資格確認書等の発行や、システム照会が必要な問い合わせへの対応ができない状態となった。",
+          "diffFromPrevious": null,
+          "statusAfterUpdate": "調査中",
+          "newFacts": ["後期高齢者医療システム臨時停止", "窓口での資格確認書発行不可", "システム照会不可"],
+          "sources": [
+            {
+              "sourceType": "municipality",
+              "publisher": "久留米市",
+              "title": "後期高齢者医療システムの臨時停止について",
+              "url": "",
+              "publishedAt": "2026-08-08",
+              "isPrimary": true,
+              "reliabilityLevel": 1
+            }
+          ]
+        }
+      ],
+      "createdAt": "2026-08-08",
+      "updatedAt": "2026-08-08"
+    },
+    {
+      "id": "2026-akita-yuzawa-001",
+      "title": "（詳細収集中）湯沢市での事案",
+      "orgName": "湯沢市",
+      "orgType": "municipality",
+      "prefecture": "秋田県",
+      "municipality": "湯沢市",
+      "insuranceTypes": [],
+      "categories": [],
+      "status": "続報待ち",
+      "occurredAt": null,
+      "firstPublishedAt": null,
+      "recoveredAt": null,
+      "lastUpdatedAt": "2026-08-10",
+      "lastCheckedAt": "2026-08-10",
+      "summary": "詳細は収集中。内容を確認次第更新してください。",
+      "currentSituation": "詳細収集中",
+      "cause": null,
+      "confirmedFacts": [],
+      "uncertaintyNote": "事案の詳細は手動で入力が必要です。このエントリはプレースホルダです。",
+      "potentialCount": null,
+      "confirmedCount": null,
+      "refund": { "exists": false, "count": null, "amount": null, "status": null },
+      "unresolvedItems": ["詳細確認"],
+      "updates": [],
+      "createdAt": "2026-08-10",
+      "updatedAt": "2026-08-10"
+    },
+    {
+      "id": "2026-hokkaido-hakodate-001",
+      "title": "（詳細収集中）函館市での事案",
+      "orgName": "函館市",
+      "orgType": "municipality",
+      "prefecture": "北海道",
+      "municipality": "函館市",
+      "insuranceTypes": [],
+      "categories": [],
+      "status": "続報待ち",
+      "occurredAt": null,
+      "firstPublishedAt": null,
+      "recoveredAt": null,
+      "lastUpdatedAt": "2026-08-10",
+      "lastCheckedAt": "2026-08-10",
+      "summary": "詳細は収集中。内容を確認次第更新してください。",
+      "currentSituation": "詳細収集中",
+      "cause": null,
+      "confirmedFacts": [],
+      "uncertaintyNote": "事案の詳細は手動で入力が必要です。このエントリはプレースホルダです。",
+      "potentialCount": null,
+      "confirmedCount": null,
+      "refund": { "exists": false, "count": null, "amount": null, "status": null },
+      "unresolvedItems": ["詳細確認"],
+      "updates": [],
+      "createdAt": "2026-08-10",
+      "updatedAt": "2026-08-10"
+    },
+    {
+      "id": "2026-hiroshima-kure-001",
+      "title": "（詳細収集中）呉市での事案",
+      "orgName": "呉市",
+      "orgType": "municipality",
+      "prefecture": "広島県",
+      "municipality": "呉市",
+      "insuranceTypes": [],
+      "categories": [],
+      "status": "続報待ち",
+      "occurredAt": null,
+      "firstPublishedAt": null,
+      "recoveredAt": null,
+      "lastUpdatedAt": "2026-08-10",
+      "lastCheckedAt": "2026-08-10",
+      "summary": "詳細は収集中。内容を確認次第更新してください。",
+      "currentSituation": "詳細収集中",
+      "cause": null,
+      "confirmedFacts": [],
+      "uncertaintyNote": "事案の詳細は手動で入力が必要です。このエントリはプレースホルダです。",
+      "potentialCount": null,
+      "confirmedCount": null,
+      "refund": { "exists": false, "count": null, "amount": null, "status": null },
+      "unresolvedItems": ["詳細確認"],
+      "updates": [],
+      "createdAt": "2026-08-10",
+      "updatedAt": "2026-08-10"
+    },
+    {
+      "id": "2026-kagoshima-kanoya-001",
+      "title": "（詳細収集中）鹿屋市での事案",
+      "orgName": "鹿屋市",
+      "orgType": "municipality",
+      "prefecture": "鹿児島県",
+      "municipality": "鹿屋市",
+      "insuranceTypes": [],
+      "categories": [],
+      "status": "続報待ち",
+      "occurredAt": null,
+      "firstPublishedAt": null,
+      "recoveredAt": null,
+      "lastUpdatedAt": "2026-08-10",
+      "lastCheckedAt": "2026-08-10",
+      "summary": "詳細は収集中。内容を確認次第更新してください。",
+      "currentSituation": "詳細収集中",
+      "cause": null,
+      "confirmedFacts": [],
+      "uncertaintyNote": "事案の詳細は手動で入力が必要です。このエントリはプレースホルダです。",
+      "potentialCount": null,
+      "confirmedCount": null,
+      "refund": { "exists": false, "count": null, "amount": null, "status": null },
+      "unresolvedItems": ["詳細確認"],
+      "updates": [],
+      "createdAt": "2026-08-10",
+      "updatedAt": "2026-08-10"
+    }
+  ]
+}

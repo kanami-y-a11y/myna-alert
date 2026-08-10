@@ -1,12 +1,12 @@
-name: Collect news and notify
+name: Collect incidents and notify
 
 on:
   schedule:
-    # 毎日 8:00, 13:00, 18:00 JST (= UTC 23:00, 04:00, 09:00)
+    # 毎日 8:00, 13:00, 18:00 JST (UTC 23:00 / 04:00 / 09:00)
     - cron: "0 23 * * *"
     - cron: "0 4 * * *"
     - cron: "0 9 * * *"
-  workflow_dispatch:  # 手動実行も可
+  workflow_dispatch:
 
 jobs:
   collect:
@@ -24,23 +24,25 @@ jobs:
       - name: Install dependencies
         run: pip install -r scripts/requirements.txt
 
-      - name: Collect news
+      - name: Collect and match incidents
         id: collect
         run: |
           python scripts/collect_news.py
-          echo "new_found=$?" >> $GITHUB_OUTPUT
+          echo "changed=$?" >> $GITHUB_OUTPUT
 
-      - name: Commit updated articles.json
-        if: steps.collect.outputs.new_found == '1'
+      - name: Commit updated incidents.json
+        if: steps.collect.outputs.changed == '1'
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add data/articles.json
-          git commit -m "chore: add new incident articles [skip ci]"
+          git add data/incidents.json
+          git commit -m "chore: update incident data [skip ci]"
           git push
 
       - name: Send email notification
-        if: steps.collect.outputs.new_found == '1'
+        if: steps.collect.outputs.changed == '1' && env.GMAIL_USERNAME != ''
+        env:
+          GMAIL_USERNAME: ${{ secrets.GMAIL_USERNAME }}
         uses: dawidd6/action-send-mail@v3
         with:
           server_address: smtp.gmail.com
@@ -48,7 +50,7 @@ jobs:
           secure: false
           username: ${{ secrets.GMAIL_USERNAME }}
           password: ${{ secrets.GMAIL_PASSWORD }}
-          subject: "🚨 マイナ保険証 新着インシデント"
+          subject: "🚨 マイナ保険証 インシデント更新"
           to: ${{ secrets.NOTIFY_EMAIL }}
           from: マイナ保険証ウォッチ <${{ secrets.GMAIL_USERNAME }}>
           body: file://new_articles_summary.txt

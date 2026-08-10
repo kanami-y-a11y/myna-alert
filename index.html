@@ -4,448 +4,536 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>マイナ保険証 インシデントウォッチ</title>
-<link rel="alternate" type="application/rss+xml" title="マイナ保険証 インシデントウォッチ" href="feed.xml">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic UI",sans-serif;font-size:14px;line-height:1.6;background:#f4f4f2;color:#1a1a18}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer}
 
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic UI", sans-serif;
-    font-size: 15px;
-    line-height: 1.6;
-    background: #f5f5f3;
-    color: #1a1a18;
-  }
+/* ── Header ── */
+.hdr{background:#1a1a18;color:#fff;padding:0 16px}
+.hdr-inner{max-width:900px;margin:0 auto;padding:14px 0 12px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.hdr-title{font-size:16px;font-weight:600;display:flex;align-items:center;gap:7px;white-space:nowrap}
+.hdr-title svg{flex-shrink:0}
+.hdr-stats{display:flex;gap:14px;margin-left:auto;font-size:12px}
+.hdr-stat{display:flex;flex-direction:column;align-items:center;gap:1px}
+.hdr-stat-num{font-size:18px;font-weight:700;line-height:1}
+.hdr-stat-num.red{color:#ff6b6b}
+.hdr-stat-num.amber{color:#ffa94d}
+.hdr-stat-label{color:#999;font-size:11px}
 
-  a { color: inherit; text-decoration: none; }
+/* ── Controls ── */
+.ctrl{background:#fff;border-bottom:1px solid #e5e5e2;position:sticky;top:0;z-index:10}
+.ctrl-inner{max-width:900px;margin:0 auto;padding:10px 16px;display:flex;flex-direction:column;gap:8px}
+.search-row{display:flex;gap:8px;align-items:center}
+.search-input{flex:1;border:1px solid #ddd;border-radius:8px;padding:7px 12px;font-size:14px;font-family:inherit;outline:none;transition:border-color .15s}
+.search-input:focus{border-color:#999}
+.btn-unresolved{padding:7px 14px;border-radius:8px;border:1px solid #ddd;background:#fff;font-size:13px;color:#555;transition:all .15s;white-space:nowrap}
+.btn-unresolved.active{background:#1a1a18;border-color:#1a1a18;color:#fff}
+.filter-row{display:flex;gap:6px;flex-wrap:wrap}
+.filter-sel{border:1px solid #ddd;border-radius:6px;padding:5px 8px;font-size:12px;font-family:inherit;color:#555;background:#fff;outline:none;cursor:pointer}
+.filter-sel:focus{border-color:#999}
+.badge-filter-row{display:flex;gap:5px;flex-wrap:wrap}
+.type-chip{font-size:12px;padding:4px 10px;border-radius:100px;border:1px solid #ddd;color:#555;cursor:pointer;background:#fff;transition:all .15s;user-select:none}
+.type-chip.active-all{background:#1a1a18;border-color:#1a1a18;color:#fff}
+.type-chip.active-NEW{background:#b71c1c;border-color:#b71c1c;color:#fff}
+.type-chip.active-UPDATE{background:#1a5fa8;border-color:#1a5fa8;color:#fff}
+.type-chip.active-RECOVERY{background:#1b5e20;border-color:#1b5e20;color:#fff}
+.type-chip.active-REFUND{background:#004d40;border-color:#004d40;color:#fff}
+.type-chip.active-CAUSE{background:#4a148c;border-color:#4a148c;color:#fff}
 
-  /* ── Header ── */
-  .site-header {
-    background: #1a1a18;
-    color: #fff;
-    padding: 0 16px;
-  }
-  .header-inner {
-    max-width: 780px;
-    margin: 0 auto;
-    padding: 18px 0 16px;
-    display: flex;
-    align-items: baseline;
-    gap: 12px;
-    flex-wrap: wrap;
-  }
-  .site-name {
-    font-size: 17px;
-    font-weight: 600;
-    letter-spacing: -0.01em;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .site-name svg { opacity: 0.9; }
-  .site-desc {
-    font-size: 12px;
-    color: #aaa;
-  }
-  .header-right {
-    margin-left: auto;
-    font-size: 12px;
-    color: #888;
-  }
-  .rss-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    color: #f5a623;
-    font-size: 12px;
-    padding: 3px 8px;
-    border: 1px solid #f5a62355;
-    border-radius: 4px;
-  }
+/* ── Main ── */
+.main{max-width:900px;margin:0 auto;padding:12px 16px 60px}
 
-  /* ── Main layout ── */
-  .main {
-    max-width: 780px;
-    margin: 0 auto;
-    padding: 0 16px 60px;
-  }
+/* ── Result info ── */
+.result-info{font-size:12px;color:#999;margin-bottom:10px;padding:0 2px}
 
-  /* ── Alert banner ── */
-  .new-banner {
-    background: #fff3cd;
-    border: 1px solid #ffc107;
-    border-radius: 8px;
-    padding: 10px 14px;
-    margin: 16px 0;
-    font-size: 13px;
-    color: #856404;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .new-banner.hidden { display: none; }
-  .pulse {
-    width: 8px; height: 8px;
-    background: #dc3545;
-    border-radius: 50%;
-    flex-shrink: 0;
-    animation: pulse 1.5s ease-in-out infinite;
-  }
-  @keyframes pulse {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.5; transform: scale(0.8); }
-  }
+/* ── Incident card ── */
+.cards{display:flex;flex-direction:column;gap:8px}
+.card{background:#fff;border:1px solid #e5e5e2;border-radius:10px;padding:14px 16px;border-left-width:4px;cursor:pointer;transition:border-color .15s,box-shadow .15s}
+.card:hover{border-color:#bbb;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.card.s-調査中,.card.s-発生,.card.s-公表{border-left-color:#e24b4a}
+.card.s-対応中,.card.s-修正済み{border-left-color:#ef9f27}
+.card.s-復旧見込み,.card.s-一部復旧{border-left-color:#378add}
+.card.s-復旧,.card.s-全面復旧,.card.s-終了{border-left-color:#639922}
+.card.s-原因判明{border-left-color:#7f77dd}
+.card.s-返金対応中{border-left-color:#1d9e75}
+.card.s-返金完了{border-left-color:#0f6e56}
+.card.s-再発防止策公表{border-left-color:#888}
+.card.s-続報待ち,.card.s-対象調査中,.card.s-対象件数確定{border-left-color:#ccc}
+.card-top{display:flex;align-items:flex-start;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.card-title{font-size:14px;font-weight:600;color:#1a1a18;margin-bottom:6px;line-height:1.45}
+.card-summary{font-size:13px;color:#555;margin-bottom:8px;line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.card-diff{font-size:12px;color:#1a5fa8;background:#e8f2fc;border-radius:4px;padding:4px 8px;margin-bottom:8px;line-height:1.5}
+.card-diff::before{content:"↻ 前回との差分: "}
+.card-cats{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px}
+.cat-pill{font-size:11px;padding:2px 7px;border-radius:100px;background:#f0f0ee;color:#666;border:1px solid #e5e5e2}
+.card-footer{display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-size:12px;color:#999}
+.card-footer-badge{display:flex;align-items:center;gap:4px;font-size:12px;font-weight:500}
+.card-footer-badge.refund{color:#0f6e56}
+.card-footer-badge.unresolved{color:#b35900}
 
-  /* ── Stats ── */
-  .stats-row {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-    margin: 16px 0;
-  }
-  .stat-card {
-    background: #fff;
-    border: 1px solid #e5e5e2;
-    border-radius: 10px;
-    padding: 12px 14px;
-    text-align: center;
-  }
-  .stat-num {
-    font-size: 26px;
-    font-weight: 700;
-    line-height: 1;
-    color: #1a1a18;
-  }
-  .stat-num.red { color: #dc3545; }
-  .stat-num.amber { color: #e67e00; }
-  .stat-label {
-    font-size: 11px;
-    color: #888;
-    margin-top: 4px;
-  }
+/* ── Badges ── */
+.badge{font-size:11px;font-weight:600;padding:2px 7px;border-radius:4px;white-space:nowrap}
+.b-NEW{background:#ffebee;color:#b71c1c}
+.b-UPDATE{background:#e8f2fc;color:#1a5fa8}
+.b-RECOVERY{background:#e8f5e9;color:#1b5e20}
+.b-REFUND{background:#e0f2f1;color:#004d40}
+.b-CAUSE{background:#ede7f6;color:#4a148c}
+.b-COUNT{background:#fff3e0;color:#e65100}
+.b-CORRECTION{background:#fff8e1;color:#f57f17}
+.b-NOTICE{background:#fce4ec;color:#880e4f}
+.b-status{font-size:11px;font-weight:600;padding:2px 7px;border-radius:4px;white-space:nowrap}
+.bs-red{background:#ffebee;color:#b71c1c}
+.bs-amber{background:#fff3e0;color:#e65100}
+.bs-blue{background:#e8f2fc;color:#1a5fa8}
+.bs-green{background:#e8f5e9;color:#1b5e20}
+.bs-purple{background:#ede7f6;color:#4a148c}
+.bs-teal{background:#e0f2f1;color:#004d40}
+.bs-gray{background:#f5f5f3;color:#666}
 
-  /* ── Filters ── */
-  .filter-bar {
-    display: flex;
-    gap: 6px;
-    flex-wrap: wrap;
-    margin: 12px 0 16px;
-  }
-  .chip {
-    font-size: 12px;
-    padding: 5px 12px;
-    border-radius: 100px;
-    border: 1px solid #ddd;
-    color: #555;
-    cursor: pointer;
-    background: #fff;
-    transition: all 0.15s;
-    user-select: none;
-  }
-  .chip:hover { border-color: #999; color: #333; }
-  .chip.active { background: #1a1a18; border-color: #1a1a18; color: #fff; }
-  .chip[data-filter="urgent"].active { background: #dc3545; border-color: #dc3545; }
-  .chip[data-filter="caution"].active { background: #e67e00; border-color: #e67e00; }
+/* ── Detail view ── */
+.detail{display:none;max-width:900px;margin:0 auto;padding:12px 16px 60px}
+.detail.show{display:block}
+.back-btn{display:inline-flex;align-items:center;gap:6px;background:none;border:1px solid #ddd;border-radius:8px;padding:7px 14px;font-size:13px;color:#555;margin-bottom:16px;transition:all .15s}
+.back-btn:hover{border-color:#999;color:#1a1a18}
+.detail-header{background:#fff;border:1px solid #e5e5e2;border-radius:10px;padding:18px;margin-bottom:12px}
+.detail-org{font-size:13px;color:#888;margin-bottom:4px}
+.detail-title{font-size:18px;font-weight:700;color:#1a1a18;margin-bottom:12px;line-height:1.4}
+.detail-badges{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.detail-cats{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px}
+.detail-meta-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}
+.meta-item{background:#f8f8f6;border-radius:8px;padding:10px 12px}
+.meta-label{font-size:11px;color:#999;margin-bottom:2px}
+.meta-value{font-size:13px;font-weight:600;color:#1a1a18}
+.meta-value.green{color:#1b5e20}
+.meta-value.red{color:#b71c1c}
+.section{background:#fff;border:1px solid #e5e5e2;border-radius:10px;padding:16px;margin-bottom:10px}
+.section-title{font-size:13px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #f0f0ee}
+.facts-list{display:flex;flex-direction:column;gap:5px}
+.fact-item{font-size:13px;color:#333;padding-left:14px;position:relative;line-height:1.5}
+.fact-item::before{content:"✓";position:absolute;left:0;color:#639922;font-size:11px;top:2px}
+.unresolved-list{display:flex;flex-direction:column;gap:5px}
+.unresolved-item{font-size:13px;color:#b35900;padding-left:14px;position:relative;line-height:1.5}
+.unresolved-item::before{content:"?";position:absolute;left:0;color:#b35900;font-size:11px;top:2px}
+.uncertainty-note{font-size:13px;color:#b35900;background:#fff8e1;border:1px solid #ffe082;border-radius:6px;padding:10px 12px;line-height:1.5}
+.uncertainty-note::before{content:"⚠ 注意: ";font-weight:600}
 
-  /* ── Cards ── */
-  .news-list { display: flex; flex-direction: column; gap: 8px; }
+/* ── Timeline ── */
+.timeline{display:flex;flex-direction:column;gap:0}
+.tl-item{display:flex;gap:12px;padding:14px 0;border-bottom:1px solid #f0f0ee}
+.tl-item:last-child{border-bottom:none}
+.tl-left{width:80px;flex-shrink:0;text-align:right;font-size:12px;color:#999;padding-top:2px}
+.tl-date{font-size:11px}
+.tl-body{flex:1;min-width:0}
+.tl-title-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:5px}
+.tl-title{font-size:13px;font-weight:600;color:#1a1a18}
+.tl-summary{font-size:13px;color:#555;line-height:1.5;margin-bottom:6px}
+.tl-diff{font-size:12px;color:#1a5fa8;background:#e8f2fc;border-radius:4px;padding:5px 8px;margin-bottom:6px;line-height:1.5}
+.tl-diff::before{content:"↻ 前回との差分: "}
+.tl-new-facts{display:flex;flex-direction:column;gap:3px;margin-bottom:6px}
+.tl-fact{font-size:12px;color:#555;padding-left:12px;position:relative}
+.tl-fact::before{content:"→";position:absolute;left:0;color:#888}
+.tl-sources{display:flex;flex-direction:column;gap:3px}
+.tl-source{font-size:12px;color:#888;display:flex;align-items:baseline;gap:6px}
+.source-primary{background:#e8f5e9;color:#1b5e20;font-size:10px;font-weight:600;padding:1px 5px;border-radius:3px}
+.source-link{color:#1a5fa8;text-decoration:underline dotted}
 
-  .card {
-    background: #fff;
-    border: 1px solid #e5e5e2;
-    border-radius: 10px;
-    padding: 14px 16px;
-    border-left-width: 4px;
-    transition: border-color 0.15s;
-  }
-  .card.urgent { border-left-color: #dc3545; }
-  .card.caution { border-left-color: #e67e00; }
-  .card.info    { border-left-color: #378add; }
-  .card.hidden  { display: none; }
+/* ── Sources section ── */
+.source-row{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid #f0f0ee;align-items:flex-start}
+.source-row:last-child{border-bottom:none}
+.source-level{width:24px;height:24px;border-radius:50%;background:#f0f0ee;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#555;flex-shrink:0}
+.source-level.l1{background:#e8f5e9;color:#1b5e20}
+.source-level.l2{background:#e3f2fd;color:#1565c0}
+.source-body{flex:1}
+.source-pub{font-size:12px;font-weight:600;color:#1a1a18}
+.source-title-s{font-size:13px;color:#333;margin:2px 0}
+.source-date{font-size:11px;color:#aaa}
 
-  .card:hover { border-color: #bbb; border-left-color: inherit; }
+/* ── Empty / loading ── */
+.empty{text-align:center;padding:40px 20px;color:#aaa;font-size:14px}
 
-  .card-header {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    flex-wrap: wrap;
-    margin-bottom: 7px;
-  }
-
-  .badge {
-    font-size: 11px;
-    font-weight: 600;
-    padding: 2px 7px;
-    border-radius: 4px;
-    white-space: nowrap;
-  }
-  .badge-urgent  { background: #fff0f0; color: #c0392b; }
-  .badge-caution { background: #fff8e6; color: #b35900; }
-  .badge-info    { background: #e8f2fc; color: #1a5fa8; }
-  .badge-org {
-    background: #f5f5f3;
-    color: #666;
-    border: 1px solid #e5e5e2;
-    font-weight: 400;
-  }
-  .badge-new {
-    background: #dc3545;
-    color: #fff;
-    font-size: 10px;
-    padding: 1px 6px;
-    border-radius: 4px;
-  }
-
-  .card-title {
-    font-size: 14px;
-    font-weight: 600;
-    color: #1a1a18;
-    margin-bottom: 6px;
-    line-height: 1.45;
-  }
-  .card-title a:hover { text-decoration: underline; }
-
-  .card-meta {
-    font-size: 12px;
-    color: #999;
-    display: flex;
-    gap: 14px;
-    flex-wrap: wrap;
-  }
-
-  .card-summary {
-    font-size: 13px;
-    color: #555;
-    margin: 6px 0 0;
-    line-height: 1.5;
-    display: none;
-  }
-  .card.expanded .card-summary { display: block; }
-  .expand-btn {
-    background: none;
-    border: none;
-    font-size: 12px;
-    color: #999;
-    cursor: pointer;
-    padding: 4px 0 0;
-    text-decoration: underline dotted;
-  }
-  .expand-btn:hover { color: #555; }
-
-  /* ── Empty state ── */
-  .empty {
-    text-align: center;
-    padding: 40px 20px;
-    color: #aaa;
-    font-size: 14px;
-    display: none;
-  }
-
-  /* ── Footer ── */
-  .site-footer {
-    max-width: 780px;
-    margin: 0 auto;
-    padding: 20px 16px;
-    font-size: 12px;
-    color: #aaa;
-    border-top: 1px solid #e5e5e2;
-  }
-
-  @media (max-width: 480px) {
-    .stats-row { grid-template-columns: repeat(3, 1fr); }
-    .stat-num { font-size: 20px; }
-  }
+/* ── Footer ── */
+footer{max-width:900px;margin:0 auto;padding:16px;font-size:12px;color:#aaa;border-top:1px solid #e5e5e2}
+.main-wrap.hidden{display:none}
 </style>
 </head>
 <body>
 
-<header class="site-header">
-  <div class="header-inner">
-    <div class="site-name">
+<header class="hdr">
+  <div class="hdr-inner">
+    <div class="hdr-title">
       <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-        <path d="M8 1.5L1.5 13h13L8 1.5Z" stroke="#f5a623" stroke-width="1.5" stroke-linejoin="round"/>
-        <path d="M8 6v3.5" stroke="#f5a623" stroke-width="1.5" stroke-linecap="round"/>
-        <circle cx="8" cy="11" r="0.75" fill="#f5a623"/>
+        <path d="M8 1.5L1.5 13h13L8 1.5Z" stroke="#ffa94d" stroke-width="1.5" stroke-linejoin="round"/>
+        <path d="M8 6v3.5" stroke="#ffa94d" stroke-width="1.5" stroke-linecap="round"/>
+        <circle cx="8" cy="11" r=".75" fill="#ffa94d"/>
       </svg>
       マイナ保険証 インシデントウォッチ
     </div>
-    <span class="site-desc">自治体・保険者・広域連合の公表情報とローカルニュースを自動収集</span>
-    <div class="header-right">
-      <a href="feed.xml" class="rss-link">
-        <svg width="12" height="12" viewBox="0 0 12 12" fill="#f5a623" aria-hidden="true">
-          <circle cx="2" cy="10" r="1.5"/>
-          <path d="M1 6.5a4.5 4.5 0 014.5 4.5" stroke="#f5a623" stroke-width="1.2" fill="none" stroke-linecap="round"/>
-          <path d="M1 3a7 7 0 017 7" stroke="#f5a623" stroke-width="1.2" fill="none" stroke-linecap="round"/>
-        </svg>
-        RSS
-      </a>
+    <div class="hdr-stats">
+      <div class="hdr-stat"><span class="hdr-stat-num red" id="st-total">—</span><span class="hdr-stat-label">累計</span></div>
+      <div class="hdr-stat"><span class="hdr-stat-num amber" id="st-unresolved">—</span><span class="hdr-stat-label">未解決</span></div>
+      <div class="hdr-stat"><span class="hdr-stat-num" id="st-week">—</span><span class="hdr-stat-label">今週更新</span></div>
     </div>
   </div>
 </header>
 
-<main class="main">
-  <div class="new-banner hidden" id="newBanner">
-    <div class="pulse"></div>
-    <span id="newBannerText">新着アラートがあります</span>
-  </div>
-
-  <div class="stats-row" id="statsRow">
-    <div class="stat-card">
-      <div class="stat-num red" id="statToday">—</div>
-      <div class="stat-label">今日の新着</div>
+<div class="ctrl">
+  <div class="ctrl-inner">
+    <div class="search-row">
+      <input class="search-input" type="search" placeholder="自治体名・キーワードで検索..." id="searchInput" autocomplete="off">
+      <button class="btn-unresolved" id="btnUnresolved">未解決のみ</button>
     </div>
-    <div class="stat-card">
-      <div class="stat-num amber" id="statMonth">—</div>
-      <div class="stat-label">直近30日</div>
+    <div class="filter-row">
+      <select class="filter-sel" id="fPref"><option value="">都道府県 ▾</option></select>
+      <select class="filter-sel" id="fOrg"><option value="">機関種別 ▾</option>
+        <option value="municipality">市区町村</option>
+        <option value="prefecture_office">都道府県</option>
+        <option value="insurer">保険者（健保組合等）</option>
+        <option value="koken">広域連合・国保連</option>
+        <option value="ministry">国・省庁</option>
+      </select>
+      <select class="filter-sel" id="fStatus"><option value="">ステータス ▾</option></select>
+      <select class="filter-sel" id="fCat"><option value="">カテゴリ ▾</option></select>
+      <select class="filter-sel" id="fInsurance"><option value="">制度 ▾</option>
+        <option value="国民健康保険">国民健康保険</option>
+        <option value="後期高齢者医療">後期高齢者医療</option>
+        <option value="マイナ保険証">マイナ保険証</option>
+        <option value="協会けんぽ">協会けんぽ</option>
+        <option value="健康保険組合">健康保険組合</option>
+      </select>
     </div>
-    <div class="stat-card">
-      <div class="stat-num" id="statTotal">—</div>
-      <div class="stat-label">累計件数</div>
+    <div class="badge-filter-row" id="typeFilterRow">
+      <div class="type-chip active-all" data-type="all">すべて</div>
+      <div class="type-chip" data-type="NEW">NEW 新規</div>
+      <div class="type-chip" data-type="UPDATE">UPDATE 続報</div>
+      <div class="type-chip" data-type="RECOVERY">RECOVERY 復旧</div>
+      <div class="type-chip" data-type="REFUND">REFUND 返金</div>
+      <div class="type-chip" data-type="CAUSE">CAUSE 原因判明</div>
     </div>
   </div>
+</div>
 
-  <div class="filter-bar" id="filterBar">
-    <div class="chip active" data-filter="all">すべて</div>
-    <div class="chip" data-filter="自治体">自治体</div>
-    <div class="chip" data-filter="保険者">保険者</div>
-    <div class="chip" data-filter="広域連合">広域連合</div>
-    <div class="chip" data-filter="報道">報道</div>
-    <div class="chip" data-filter="urgent">緊急のみ</div>
+<div class="main-wrap" id="listWrap">
+  <div class="main">
+    <div class="result-info" id="resultInfo"></div>
+    <div class="cards" id="cardList"></div>
+    <div class="empty" id="emptyMsg" style="display:none">該当する案件はありません</div>
   </div>
+</div>
 
-  <div class="news-list" id="newsList"></div>
-  <div class="empty" id="emptyState">該当するニュースはありません</div>
-</main>
+<div class="detail" id="detailView">
+  <button class="back-btn" id="backBtn">← 一覧に戻る</button>
+  <div id="detailContent"></div>
+</div>
 
-<footer class="site-footer">
-  <span id="lastUpdated">読み込み中...</span> ·
-  本サイトはGoogle News RSSを自動収集し、編集者による確認を経て掲載しています。
+<footer id="siteFooter">
+  <span id="lastUpdated">読み込み中...</span> · 自治体・保険者の公表情報およびニュース報道を自動収集・整理しています。
 </footer>
 
 <script>
-const SEVERITY_LABEL = { urgent: '緊急', caution: '注意', info: '情報' };
-const SEVERITY_CLASS = { urgent: 'badge-urgent', caution: 'badge-caution', info: 'badge-info' };
+const ORG_LABEL = {municipality:'市区町村',prefecture_office:'都道府県',insurer:'保険者',koken:'広域連合・国保連',ministry:'国・省庁',other:'その他'};
+const UPDATE_TYPE_LABEL = {NEW:'NEW',UPDATE:'UPDATE',RECOVERY:'RECOVERY',REFUND:'REFUND',CAUSE:'CAUSE',COUNT:'COUNT',CORRECTION:'CORRECTION',NOTICE:'NOTICE'};
+const STATUS_CLASS = {
+  '発生':'bs-red','公表':'bs-red','調査中':'bs-red','対応中':'bs-amber','修正済み':'bs-amber',
+  '復旧見込み':'bs-blue','一部復旧':'bs-blue',
+  '復旧':'bs-green','全面復旧':'bs-green','終了':'bs-green',
+  '原因判明':'bs-purple','再発防止策公表':'bs-purple',
+  '返金対応中':'bs-teal','返金完了':'bs-teal',
+  '対象調査中':'bs-amber','対象件数確定':'bs-amber','続報待ち':'bs-gray'
+};
+const UNRESOLVED_STATUSES = ['発生','公表','調査中','対応中','修正済み','復旧見込み','一部復旧','原因判明','対象調査中','対象件数確定','返金対応中','続報待ち','再発防止策公表'];
 
-let allArticles = [];
-let currentFilter = 'all';
+let state = {
+  all: [],
+  filtered: [],
+  selected: null,
+  search: '',
+  unresolvedOnly: false,
+  typeFilter: 'all',
+  filters: { pref: '', org: '', status: '', cat: '', insurance: '' }
+};
 
-function todayStr() {
-  return new Date().toISOString().slice(0, 10);
+function isWithinWeek(d) {
+  return d && (new Date() - new Date(d)) / 86400000 <= 7;
 }
 
-function isWithin30Days(dateStr) {
-  const d = new Date(dateStr);
-  const now = new Date();
-  return (now - d) / 86400000 <= 30;
+function latestUpdate(inc) {
+  return inc.updates && inc.updates.length > 0 ? inc.updates[inc.updates.length - 1] : null;
 }
 
-function isNew(dateStr) {
-  const d = new Date(dateStr);
-  const now = new Date();
-  return (now - d) / 3600000 <= 48;
+function latestUpdateType(inc) {
+  const u = latestUpdate(inc);
+  return u ? u.type : null;
 }
 
-function renderStats(articles) {
-  const today = todayStr();
-  document.getElementById('statToday').textContent =
-    articles.filter(a => a.date === today).length;
-  document.getElementById('statMonth').textContent =
-    articles.filter(a => isWithin30Days(a.date)).length;
-  document.getElementById('statTotal').textContent = articles.length;
+function escHtml(s) {
+  if (!s) return '';
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
-function renderCards(articles) {
-  const list = document.getElementById('newsList');
-  const empty = document.getElementById('emptyState');
-  list.innerHTML = '';
-
-  const filtered = currentFilter === 'all'
-    ? articles
-    : currentFilter === 'urgent'
-      ? articles.filter(a => a.severity === 'urgent')
-      : articles.filter(a => a.org_type === currentFilter);
-
-  empty.style.display = filtered.length === 0 ? 'block' : 'none';
-
-  filtered.forEach(article => {
-    const card = document.createElement('div');
-    card.className = `card ${article.severity}`;
-
-    const newBadge = isNew(article.date)
-      ? '<span class="badge badge-new">NEW</span>' : '';
-
-    const titleHtml = article.url
-      ? `<a href="${article.url}" target="_blank" rel="noopener">${article.title}</a>`
-      : article.title;
-
-    const summaryHtml = article.summary
-      ? `<div class="card-summary">${article.summary}</div>
-         <button class="expand-btn" onclick="toggleExpand(this)">▼ 詳細</button>`
-      : '';
-
-    card.innerHTML = `
-      <div class="card-header">
-        ${newBadge}
-        <span class="badge ${SEVERITY_CLASS[article.severity]}">${SEVERITY_LABEL[article.severity]}</span>
-        <span class="badge badge-org">${article.org_type}</span>
-        ${article.location ? `<span class="badge badge-org">${article.location}</span>` : ''}
-      </div>
-      <div class="card-title">${titleHtml}</div>
-      <div class="card-meta">
-        <span>${article.date}</span>
-        <span>${article.source}</span>
-      </div>
-      ${summaryHtml}
-    `;
-    list.appendChild(card);
-  });
+function statusBadge(status) {
+  const cls = STATUS_CLASS[status] || 'bs-gray';
+  return `<span class="b-status ${cls}">${escHtml(status)}</span>`;
 }
 
-function toggleExpand(btn) {
-  const card = btn.closest('.card');
-  const expanded = card.classList.toggle('expanded');
-  btn.textContent = expanded ? '▲ 閉じる' : '▼ 詳細';
+function updateTypeBadge(type) {
+  return type ? `<span class="badge b-${type}">${type}</span>` : '';
 }
 
-function setupFilters() {
-  document.getElementById('filterBar').querySelectorAll('.chip').forEach(chip => {
-    chip.addEventListener('click', () => {
-      document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-      chip.classList.add('active');
-      currentFilter = chip.dataset.filter;
-      renderCards(allArticles);
-    });
-  });
-}
-
-async function loadData() {
+async function init() {
   try {
-    const res = await fetch('data/articles.json?t=' + Date.now());
-    const data = await res.json();
-    allArticles = data.articles.sort((a, b) => b.date.localeCompare(a.date));
-
-    const newCount = allArticles.filter(a => isNew(a.date)).length;
-    const banner = document.getElementById('newBanner');
-    if (newCount > 0) {
-      banner.classList.remove('hidden');
-      document.getElementById('newBannerText').textContent =
-        `本日・昨日の新着アラート: ${newCount}件`;
-    }
-
-    renderStats(allArticles);
-    renderCards(allArticles);
-
-    const lu = new Date(data.last_updated);
-    document.getElementById('lastUpdated').textContent =
-      `最終更新: ${lu.toLocaleString('ja-JP', { timeZone: 'Asia/Tokyo' })}`;
-  } catch (e) {
-    document.getElementById('lastUpdated').textContent = 'データの読み込みに失敗しました';
+    const data = await fetch('data/incidents.json?t=' + Date.now()).then(r => r.json());
+    state.all = (data.incidents || []).sort((a,b) => (b.lastUpdatedAt||'').localeCompare(a.lastUpdatedAt||''));
+    buildFilterOptions(state.all);
+    updateStats(state.all, data.meta);
+    const lu = new Date(data.meta.lastUpdated);
+    document.getElementById('lastUpdated').textContent = '最終更新: ' + lu.toLocaleString('ja-JP',{timeZone:'Asia/Tokyo'});
+    applyFilters();
+    renderList();
+  } catch(e) {
+    document.getElementById('emptyMsg').style.display = 'block';
+    document.getElementById('emptyMsg').textContent = 'データの読み込みに失敗しました';
     console.error(e);
   }
 }
 
-setupFilters();
-loadData();
+function updateStats(incidents, meta) {
+  document.getElementById('st-total').textContent = meta.totalCount || incidents.length;
+  document.getElementById('st-unresolved').textContent = incidents.filter(i => UNRESOLVED_STATUSES.includes(i.status)).length;
+  document.getElementById('st-week').textContent = incidents.filter(i => isWithinWeek(i.lastUpdatedAt)).length;
+}
+
+function buildFilterOptions(incidents) {
+  const prefs = [...new Set(incidents.map(i=>i.prefecture).filter(Boolean))].sort();
+  const statuses = [...new Set(incidents.map(i=>i.status).filter(Boolean))];
+  const cats = [...new Set(incidents.flatMap(i=>i.categories||[]))].sort();
+
+  const fPref = document.getElementById('fPref');
+  prefs.forEach(p => fPref.insertAdjacentHTML('beforeend', `<option value="${escHtml(p)}">${escHtml(p)}</option>`));
+
+  const fStatus = document.getElementById('fStatus');
+  statuses.forEach(s => fStatus.insertAdjacentHTML('beforeend', `<option value="${escHtml(s)}">${escHtml(s)}</option>`));
+
+  const fCat = document.getElementById('fCat');
+  cats.forEach(c => fCat.insertAdjacentHTML('beforeend', `<option value="${escHtml(c)}">${escHtml(c)}</option>`));
+}
+
+function applyFilters() {
+  let r = [...state.all];
+  if (state.search) {
+    const q = state.search.toLowerCase();
+    r = r.filter(i =>
+      (i.title||'').toLowerCase().includes(q) ||
+      (i.orgName||'').toLowerCase().includes(q) ||
+      (i.summary||'').toLowerCase().includes(q) ||
+      (i.prefecture||'').toLowerCase().includes(q) ||
+      (i.municipality||'').toLowerCase().includes(q) ||
+      (i.categories||[]).some(c=>c.includes(q))
+    );
+  }
+  if (state.unresolvedOnly) r = r.filter(i => UNRESOLVED_STATUSES.includes(i.status));
+  if (state.filters.pref) r = r.filter(i => i.prefecture === state.filters.pref);
+  if (state.filters.org) r = r.filter(i => i.orgType === state.filters.org);
+  if (state.filters.status) r = r.filter(i => i.status === state.filters.status);
+  if (state.filters.cat) r = r.filter(i => (i.categories||[]).includes(state.filters.cat));
+  if (state.filters.insurance) r = r.filter(i => (i.insuranceTypes||[]).includes(state.filters.insurance));
+  if (state.typeFilter !== 'all') r = r.filter(i => latestUpdateType(i) === state.typeFilter);
+  state.filtered = r;
+}
+
+function renderList() {
+  document.getElementById('listWrap').classList.remove('hidden');
+  document.getElementById('detailView').classList.remove('show');
+
+  const list = document.getElementById('cardList');
+  const empty = document.getElementById('emptyMsg');
+  const info = document.getElementById('resultInfo');
+  list.innerHTML = '';
+  info.textContent = `${state.filtered.length} 件表示`;
+  empty.style.display = state.filtered.length === 0 ? 'block' : 'none';
+
+  state.filtered.forEach(inc => {
+    const u = latestUpdate(inc);
+    const uType = u ? u.type : null;
+    const cats = (inc.categories||[]).slice(0,4);
+    const moreCats = (inc.categories||[]).length - cats.length;
+    const dateStr = inc.lastUpdatedAt || inc.firstPublishedAt || '';
+
+    const card = document.createElement('div');
+    card.className = `card s-${escHtml(inc.status)}`;
+    card.innerHTML = `
+      <div class="card-top">
+        ${uType ? `<span class="badge b-${uType}">${uType}</span>` : ''}
+        ${statusBadge(inc.status)}
+        <span style="font-size:12px;color:#888;margin-left:auto">${escHtml(inc.prefecture||'')} ${escHtml(inc.orgName||'')}</span>
+        <span style="font-size:11px;color:#bbb">${escHtml(dateStr)}</span>
+      </div>
+      <div class="card-title">${escHtml(inc.title)}</div>
+      ${u && u.diffFromPrevious ? `<div class="card-diff">${escHtml(u.diffFromPrevious)}</div>` : ''}
+      ${inc.summary ? `<div class="card-summary">${escHtml(inc.summary)}</div>` : ''}
+      <div class="card-cats">
+        ${cats.map(c=>`<span class="cat-pill">${escHtml(c)}</span>`).join('')}
+        ${moreCats > 0 ? `<span class="cat-pill">+${moreCats}</span>` : ''}
+      </div>
+      <div class="card-footer">
+        ${inc.potentialCount ? `<span>対象 約${inc.potentialCount.toLocaleString()}人</span>` : ''}
+        ${inc.confirmedCount ? `<span>確定 ${inc.confirmedCount.toLocaleString()}人</span>` : ''}
+        ${inc.refund && inc.refund.exists ? `<span class="card-footer-badge refund">💰 返金あり</span>` : ''}
+        ${inc.unresolvedItems && inc.unresolvedItems.length > 0 ? `<span class="card-footer-badge unresolved">⚠ 未解決 ${inc.unresolvedItems.length}項目</span>` : ''}
+        ${inc.recoveredAt ? `<span style="color:#639922">✓ 復旧済</span>` : ''}
+      </div>
+    `;
+    card.addEventListener('click', () => showDetail(inc));
+    list.appendChild(card);
+  });
+}
+
+function showDetail(inc) {
+  state.selected = inc;
+  document.getElementById('listWrap').classList.add('hidden');
+  const dv = document.getElementById('detailView');
+  dv.classList.add('show');
+  window.scrollTo(0,0);
+  renderDetail(inc);
+}
+
+function renderDetail(inc) {
+  const cats = (inc.categories||[]);
+  const uType = latestUpdateType(inc);
+  const allSources = (inc.updates||[]).flatMap(u=>u.sources||[]);
+  const uniqueSources = allSources.filter((s,i,a) => a.findIndex(t=>t.url===s.url&&t.publisher===s.publisher)===i);
+
+  const html = `
+    <div class="detail-header">
+      <div class="detail-org">${escHtml(inc.prefecture||'')}　${escHtml(ORG_LABEL[inc.orgType]||'')}　${escHtml(inc.orgName||'')}</div>
+      <div class="detail-title">${escHtml(inc.title)}</div>
+      <div class="detail-badges">
+        ${uType ? `<span class="badge b-${uType}">${uType}</span>` : ''}
+        ${statusBadge(inc.status)}
+        ${inc.refund&&inc.refund.exists ? `<span class="badge" style="background:#e0f2f1;color:#004d40">💰 返金あり</span>` : ''}
+        ${inc.recoveredAt ? `<span class="badge" style="background:#e8f5e9;color:#1b5e20">✓ 復旧済</span>` : ''}
+      </div>
+      <div class="detail-cats">${cats.map(c=>`<span class="cat-pill">${escHtml(c)}</span>`).join('')}</div>
+      <div class="detail-meta-grid">
+        ${inc.occurredAt ? `<div class="meta-item"><div class="meta-label">発生日</div><div class="meta-value">${escHtml(inc.occurredAt)}</div></div>` : ''}
+        ${inc.firstPublishedAt ? `<div class="meta-item"><div class="meta-label">公表日</div><div class="meta-value">${escHtml(inc.firstPublishedAt)}</div></div>` : ''}
+        ${inc.lastUpdatedAt ? `<div class="meta-item"><div class="meta-label">最終更新</div><div class="meta-value">${escHtml(inc.lastUpdatedAt)}</div></div>` : ''}
+        ${inc.recoveredAt ? `<div class="meta-item"><div class="meta-label">復旧日</div><div class="meta-value green">${escHtml(inc.recoveredAt)}</div></div>` : ''}
+        ${inc.potentialCount != null ? `<div class="meta-item"><div class="meta-label">対象（推定）</div><div class="meta-value">${inc.potentialCount.toLocaleString()}人</div></div>` : ''}
+        ${inc.confirmedCount != null ? `<div class="meta-item"><div class="meta-label">対象（確定）</div><div class="meta-value red">${inc.confirmedCount.toLocaleString()}人</div></div>` : ''}
+        ${inc.refund&&inc.refund.count != null ? `<div class="meta-item"><div class="meta-label">返金件数</div><div class="meta-value">${inc.refund.count.toLocaleString()}件</div></div>` : ''}
+        ${inc.refund&&inc.refund.amount ? `<div class="meta-item"><div class="meta-label">返金総額</div><div class="meta-value">${escHtml(inc.refund.amount)}</div></div>` : ''}
+      </div>
+    </div>
+
+    ${inc.currentSituation ? `
+    <div class="section">
+      <div class="section-title">現在の状況</div>
+      <p style="font-size:14px;color:#333;line-height:1.7">${escHtml(inc.currentSituation)}</p>
+    </div>` : ''}
+
+    ${inc.cause || inc.uncertaintyNote ? `
+    <div class="section">
+      <div class="section-title">原因</div>
+      ${inc.cause ? `<p style="font-size:14px;color:#333;line-height:1.7">${escHtml(inc.cause)}</p>` : ''}
+      ${inc.uncertaintyNote ? `<div class="uncertainty-note">${escHtml(inc.uncertaintyNote)}</div>` : ''}
+    </div>` : ''}
+
+    ${(inc.confirmedFacts||[]).length > 0 ? `
+    <div class="section">
+      <div class="section-title">確認された事実</div>
+      <div class="facts-list">${(inc.confirmedFacts||[]).map(f=>`<div class="fact-item">${escHtml(f)}</div>`).join('')}</div>
+    </div>` : ''}
+
+    ${(inc.unresolvedItems||[]).length > 0 ? `
+    <div class="section">
+      <div class="section-title">⚠ 未解決項目</div>
+      <div class="unresolved-list">${(inc.unresolvedItems||[]).map(u=>`<div class="unresolved-item">${escHtml(u)}</div>`).join('')}</div>
+    </div>` : ''}
+
+    ${(inc.updates||[]).length > 0 ? `
+    <div class="section">
+      <div class="section-title">更新履歴（${inc.updates.length}件）</div>
+      <div class="timeline">
+        ${[...(inc.updates||[])].reverse().map(u => `
+          <div class="tl-item">
+            <div class="tl-left"><div class="tl-date">${escHtml(u.publishedAt||'')}</div></div>
+            <div class="tl-body">
+              <div class="tl-title-row">
+                ${u.type ? `<span class="badge b-${u.type}">${u.type}</span>` : ''}
+                <span class="tl-title">${escHtml(u.title||'')}</span>
+              </div>
+              <div class="tl-summary">${escHtml(u.summary||'')}</div>
+              ${u.diffFromPrevious ? `<div class="tl-diff">${escHtml(u.diffFromPrevious)}</div>` : ''}
+              ${(u.newFacts||[]).length > 0 ? `
+                <div class="tl-new-facts">
+                  ${(u.newFacts||[]).map(f=>`<div class="tl-fact">${escHtml(f)}</div>`).join('')}
+                </div>` : ''}
+              ${(u.sources||[]).length > 0 ? `
+                <div class="tl-sources">
+                  ${(u.sources||[]).map(s=>`
+                    <div class="tl-source">
+                      ${s.isPrimary ? '<span class="source-primary">一次</span>' : ''}
+                      <span>${escHtml(s.publisher)}</span>
+                      ${s.url ? `<a class="source-link" href="${escHtml(s.url)}" target="_blank" rel="noopener">${escHtml(s.title||s.url)}</a>` : `<span style="color:#bbb">${escHtml(s.title||'')}</span>`}
+                    </div>`).join('')}
+                </div>` : ''}
+            </div>
+          </div>`).join('')}
+      </div>
+    </div>` : ''}
+
+    ${uniqueSources.length > 0 ? `
+    <div class="section">
+      <div class="section-title">情報源一覧</div>
+      ${uniqueSources.map(s=>`
+        <div class="source-row">
+          <div class="source-level l${s.reliabilityLevel||3}">${s.reliabilityLevel||'?'}</div>
+          <div class="source-body">
+            <div class="source-pub">${escHtml(s.publisher)} ${s.isPrimary?'<span class="source-primary">一次情報</span>':''}</div>
+            ${s.url ? `<div class="source-title-s"><a class="source-link" href="${escHtml(s.url)}" target="_blank" rel="noopener">${escHtml(s.title||s.url)}</a></div>` : `<div class="source-title-s" style="color:#888">${escHtml(s.title||'')}</div>`}
+            <div class="source-date">${escHtml(s.publishedAt||'')}</div>
+          </div>
+        </div>`).join('')}
+    </div>` : ''}
+  `;
+  document.getElementById('detailContent').innerHTML = html;
+}
+
+// Events
+document.getElementById('searchInput').addEventListener('input', e => {
+  state.search = e.target.value.trim();
+  applyFilters(); renderList();
+});
+document.getElementById('btnUnresolved').addEventListener('click', e => {
+  state.unresolvedOnly = !state.unresolvedOnly;
+  e.currentTarget.classList.toggle('active', state.unresolvedOnly);
+  applyFilters(); renderList();
+});
+document.getElementById('fPref').addEventListener('change', e => { state.filters.pref = e.target.value; applyFilters(); renderList(); });
+document.getElementById('fOrg').addEventListener('change', e => { state.filters.org = e.target.value; applyFilters(); renderList(); });
+document.getElementById('fStatus').addEventListener('change', e => { state.filters.status = e.target.value; applyFilters(); renderList(); });
+document.getElementById('fCat').addEventListener('change', e => { state.filters.cat = e.target.value; applyFilters(); renderList(); });
+document.getElementById('fInsurance').addEventListener('change', e => { state.filters.insurance = e.target.value; applyFilters(); renderList(); });
+document.getElementById('backBtn').addEventListener('click', () => {
+  state.selected = null;
+  document.getElementById('listWrap').classList.remove('hidden');
+  document.getElementById('detailView').classList.remove('show');
+  window.scrollTo(0,0);
+});
+document.getElementById('typeFilterRow').addEventListener('click', e => {
+  const chip = e.target.closest('[data-type]');
+  if (!chip) return;
+  state.typeFilter = chip.dataset.type;
+  document.querySelectorAll('.type-chip').forEach(c => {
+    const t = c.dataset.type;
+    c.className = 'type-chip' + (t === state.typeFilter ? ` active-${t}` : '');
+  });
+  applyFilters(); renderList();
+});
+
+init();
 </script>
 </body>
 </html>
