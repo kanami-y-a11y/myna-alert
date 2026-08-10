@@ -1,9 +1,9 @@
 {
   "meta": {
-    "lastUpdated": "2026-08-10T14:00:00+09:00",
+    "lastUpdated": "2026-08-10T15:00:00+09:00",
     "version": "2.0",
     "totalCount": 9,
-    "unresolvedCount": 8
+    "unresolvedCount": 7
   },
   "incidents": [
     {
@@ -28,7 +28,7 @@
         "市内医療機関でオンライン資格確認時に別人の情報が表示された",
         "堺市が事象を確認し公表した"
       ],
-      "uncertaintyNote": "原因・影響件数・対象者範囲はいずれも公表情報では確認できない。「システム障害」とは断定できない。",
+      "uncertaintyNote": "【出典URL未確認】ネット検索では公式発表ページ・報道記事が見つかっていない。原因・影響件数・対象者範囲も公表情報では確認できない。事案の存在含め、出典の確認と手動更新が必要。",
       "potentialCount": null,
       "confirmedCount": null,
       "refund": { "exists": false, "count": null, "amount": null, "status": null },
@@ -61,56 +61,102 @@
     },
     {
       "id": "2026-aomori-hirosaki-001",
-      "title": "マイナ保険証への切替案内の誤送付（約400世帯）",
+      "title": "マイナ保険証利用で負担割合・自己負担限度額が確認不可または誤表示",
       "orgName": "弘前市",
       "orgType": "municipality",
       "prefecture": "青森県",
       "municipality": "弘前市",
       "insuranceTypes": ["国民健康保険"],
-      "categories": ["マイナ保険証", "誤送付", "国民健康保険", "窓口業務影響"],
-      "status": "対応中",
-      "occurredAt": "2026-08-09",
-      "firstPublishedAt": "2026-08-09",
-      "recoveredAt": null,
-      "lastUpdatedAt": "2026-08-09",
+      "categories": ["マイナ保険証", "オンライン資格確認", "負担割合", "誤表示"],
+      "status": "全面復旧",
+      "occurredAt": "2026-08-01",
+      "firstPublishedAt": "2026-08-04",
+      "recoveredAt": "2026-08-07",
+      "lastUpdatedAt": "2026-08-07",
       "lastCheckedAt": "2026-08-10",
-      "summary": "マイナ保険証への切替案内を、すでにマイナ保険証を取得済みの約400世帯に誤って送付した。",
-      "currentSituation": "誤送付を確認。対象者への対応方法を検討中。",
-      "cause": "送付対象者リストの絞り込みミス（推定）",
+      "summary": "2026年8月1日、弘前市の国民健康保険加入者（70〜74歳）の一部がマイナ保険証を利用した際、医療機関で負担割合の確認ができないまたは異なる割合が表示される不具合が発生。8月4日に市が公表し、8月7日に全面復旧。",
+      "currentSituation": "2026年8月7日時点ですべて正常に復旧。今後の対応はホームページで随時案内予定。",
+      "cause": "市から送信した資格情報の一部が最新情報に更新されていなかったため、オンライン資格確認システムとの情報連携に誤りが生じた。",
       "confirmedFacts": [
-        "マイナ保険証取得済みの約400世帯に切替案内を誤送付",
-        "弘前市国保が事象を確認し公表"
+        "2026年8月1日から70〜74歳の国保加入者（マイナ保険証利用者）で負担割合の確認不可・誤表示が発生",
+        "医療機関・加入者から複数の問い合わせが市に寄せられ発覚",
+        "市は対象者に「資格情報のお知らせ」を医療機関受診時に持参するよう呼びかけ",
+        "2026年8月4日に弘前市が公式発表",
+        "2026年8月7日に全面復旧を確認"
       ],
-      "uncertaintyNote": "原因の詳細（リスト作成ミスかシステム起因か）は公表情報では確認できない。",
-      "potentialCount": 400,
+      "uncertaintyNote": null,
+      "potentialCount": null,
       "confirmedCount": null,
       "refund": { "exists": false, "count": null, "amount": null, "status": null },
-      "unresolvedItems": ["対象者への謝罪・説明対応", "原因の確定と公表", "再発防止策"],
+      "unresolvedItems": [],
       "updates": [
         {
           "id": "2026-aomori-hirosaki-001-u001",
           "type": "NEW",
-          "publishedAt": "2026-08-09",
-          "title": "マイナ保険証切替案内を約400世帯に誤送付",
-          "summary": "マイナ保険証への切替案内を、すでに取得済みの約400世帯に重複して送付したことを弘前市が公表。",
+          "publishedAt": "2026-08-04",
+          "title": "マイナ保険証で負担割合の確認不可・誤表示が発生、市が公表",
+          "summary": "弘前市国民健康保険加入者（70〜74歳）の一部がマイナ保険証を利用した際、医療機関での負担割合確認ができないまたは異なる割合が表示される不具合が2026年8月1日から発生。市が「資格情報のお知らせ」持参を呼びかけ。",
           "diffFromPrevious": null,
           "statusAfterUpdate": "対応中",
-          "newFacts": ["取得済み約400世帯に誤送付", "弘前市が公表"],
+          "newFacts": [
+            "70〜74歳国保加入者のマイナ保険証利用時に負担割合が確認不可・誤表示",
+            "医療機関から複数の問い合わせが市に寄せられ発覚",
+            "原因：市の資格情報の一部が最新化されていなかった"
+          ],
           "sources": [
             {
               "sourceType": "municipality",
               "publisher": "弘前市",
-              "title": "マイナ保険証切替案内の誤送付について",
-              "url": "",
-              "publishedAt": "2026-08-09",
+              "title": "国民健康保険のマイナンバーカードの保険証利用時の一部不具合について",
+              "url": "https://www.city.hirosaki.aomori.jp/oshirase/fukushi/2026-0804.html",
+              "publishedAt": "2026-08-04",
+              "isPrimary": true,
+              "reliabilityLevel": 1
+            },
+            {
+              "sourceType": "news_local",
+              "publisher": "Web東奥（東奥日報）",
+              "title": "マイナ保険証、弘前で一部不具合／負担割合確認できず",
+              "url": "https://www.toonippo.co.jp/articles/-/2332712",
+              "publishedAt": "2026-08-04",
+              "isPrimary": false,
+              "reliabilityLevel": 3
+            },
+            {
+              "sourceType": "news_local",
+              "publisher": "ABA青森朝日放送",
+              "title": "弘前市 マイナ保険証一部でトラブル「資格情報のお知らせ」の持参を呼びかけ",
+              "url": "https://www.aba-net.com/news/news-193322.html",
+              "publishedAt": "2026-08-04",
+              "isPrimary": false,
+              "reliabilityLevel": 3
+            }
+          ]
+        },
+        {
+          "id": "2026-aomori-hirosaki-001-u002",
+          "type": "RECOVERY",
+          "publishedAt": "2026-08-07",
+          "title": "全面復旧を確認（8月7日）",
+          "summary": "弘前市が2026年8月7日時点ですべて正常に復旧したことを確認。今後の対応についてはホームページで随時案内予定。",
+          "diffFromPrevious": "対応中→全面復旧。負担割合の誤表示・確認不可の不具合がすべて解消された。",
+          "statusAfterUpdate": "全面復旧",
+          "newFacts": ["2026年8月7日に全面復旧を確認"],
+          "sources": [
+            {
+              "sourceType": "municipality",
+              "publisher": "弘前市",
+              "title": "国民健康保険のマイナンバーカードの保険証利用時の一部不具合について（復旧のご案内）",
+              "url": "https://www.city.hirosaki.aomori.jp/oshirase/fukushi/2026-0804.html",
+              "publishedAt": "2026-08-07",
               "isPrimary": true,
               "reliabilityLevel": 1
             }
           ]
         }
       ],
-      "createdAt": "2026-08-09",
-      "updatedAt": "2026-08-09"
+      "createdAt": "2026-08-04",
+      "updatedAt": "2026-08-10"
     },
     {
       "id": "2026-niigata-joetsu-001",
@@ -122,22 +168,23 @@
       "insuranceTypes": ["国民健康保険", "後期高齢者医療"],
       "categories": ["オンライン資格確認", "負担割合", "限度額区分", "誤表示", "返金", "データ連携不備"],
       "status": "返金対応中",
-      "occurredAt": "2026-08-04",
+      "occurredAt": "2026-08-01",
       "firstPublishedAt": "2026-08-04",
       "recoveredAt": "2026-08-06",
       "lastUpdatedAt": "2026-08-07",
       "lastCheckedAt": "2026-08-10",
-      "summary": "オンライン資格確認において、一部の被保険者の負担割合・限度額適用区分が正しく表示されない事象が発生。8月6日に復旧見込みが示され、差額返金対応が発表された。",
-      "currentSituation": "修正作業実施済み。差額返金の対応方法を関係機関と調整中。",
-      "cause": "資格情報の一部が最新状態に更新されていなかった（市から送信したデータの反映不備）",
+      "summary": "2026年8月1日からオンライン資格確認において70〜74歳の前期高齢者（9,955人）の負担割合が2割→3割と誤表示、国保加入者（27,745人）の自己負担限度額区分が誤表示。8月3日に復旧作業完了、8月6日に正しい情報が反映予定。差額返金対応を実施。",
+      "currentSituation": "修正作業完了。差額返金対応方法を関係機関と調整中。",
+      "cause": "年次処理に関連するシステム処理の設定誤りにより、医療機関へ正しい情報が連携されなかった。",
       "confirmedFacts": [
-        "8月4日に負担割合・限度額区分の誤表示を確認",
-        "8月4日〜5日に修正作業を実施",
-        "8月6日に正しい情報が反映される見込みと公表",
-        "差額返金対応を実施することを公表"
+        "8月1日から70〜74歳前期高齢者9,955人の負担割合が2割→3割と誤表示",
+        "国保加入者27,745人の自己負担限度額区分が誤表示",
+        "医療機関から17件、加入者から2件の問い合わせが発生（8月4日9時時点）",
+        "8月3日に復旧作業完了、8月6日に正しい情報が反映予定",
+        "誤った負担割合で支払が発生した場合は後日市から手続き案内を実施予定"
       ],
-      "uncertaintyNote": "返金対象の確定件数・返金総額は続報待ち。「全件復旧」の正式確認は続報待ち。",
-      "potentialCount": null,
+      "uncertaintyNote": "返金対象の確定件数・返金総額は続報待ち。",
+      "potentialCount": 37700,
       "confirmedCount": null,
       "refund": { "exists": true, "count": null, "amount": null, "status": "対応方法調整中" },
       "unresolvedItems": ["返金対象件数の確定", "返金総額の確定", "再発防止策の公表"],
@@ -160,6 +207,24 @@
               "publishedAt": "2026-08-04",
               "isPrimary": true,
               "reliabilityLevel": 1
+            },
+            {
+              "sourceType": "news_local",
+              "publisher": "上越タウンジャーナル",
+              "title": "上越市でマイナ保険証などオンライン資格確認に不具合 国保加入者の一部",
+              "url": "https://www.joetsutj.com/2026/08/04/175902",
+              "publishedAt": "2026-08-04",
+              "isPrimary": false,
+              "reliabilityLevel": 3
+            },
+            {
+              "sourceType": "news_local",
+              "publisher": "上越妙高タウン情報",
+              "title": "上越市 医療機関などで国民健康保険加入者の負担割合等が正しく表示されない事象発生",
+              "url": "https://joetsu.yukiguni.town/l-news/332845/",
+              "publishedAt": "2026-08-04",
+              "isPrimary": false,
+              "reliabilityLevel": 3
             }
           ]
         },
@@ -228,12 +293,12 @@
       "insuranceTypes": ["後期高齢者医療"],
       "categories": ["後期高齢者医療", "臨時停止", "窓口業務影響", "資格確認書", "システム停止"],
       "status": "調査中",
-      "occurredAt": null,
-      "firstPublishedAt": "2026-08-08",
-      "recoveredAt": null,
-      "lastUpdatedAt": "2026-08-08",
+      "occurredAt": "2026-08-05",
+      "firstPublishedAt": "2026-08-03",
+      "recoveredAt": "2026-08-06",
+      "lastUpdatedAt": "2026-08-06",
       "lastCheckedAt": "2026-08-10",
-      "summary": "後期高齢者医療に係るシステムを臨時停止。停止中は窓口での資格確認書等の発行ができず、システム照会が必要な問い合わせへの回答もできない状況となった。",
+      "summary": "後期高齢者医療に係るシステムを2026年8月5日（水）15:30〜8月6日（木）8:30まで臨時停止。停止中は窓口での資格確認書等の発行ができず、システム照会が必要な問い合わせへの回答もできない状況となった。",
       "currentSituation": "臨時停止中。停止理由（障害・計画停止・その他）は公表文では確認できない。",
       "cause": null,
       "confirmedFacts": [
