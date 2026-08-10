@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>マイナ保険証 インシデントウォッチ</title>
+<link rel="alternate" type="application/rss+xml" title="マイナ保険証 インシデントウォッチ" href="feed.xml">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic UI", sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    background: #f5f5f3;
+    color: #1a1a18;
+  }
+
+  a { color: inherit; text-decoration: none; }
+
+  /* ── Header ── */
+  .site-header {
+    background: #1a1a18;
+    color: #fff;
+    padding: 0 16px;
+  }
+  .header-inner {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 18px 0 16px;
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .site-name {
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .site-name svg { opacity: 0.9; }
+  .site-desc {
+    font-size: 12px;
+    color: #aaa;
+  }
+  .header-right {
+    margin-left: auto;
+    font-size: 12px;
+    color: #888;
+  }
+  .rss-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    color: #f5a623;
+    font-size: 12px;
+    padding: 3px 8px;
+    border: 1px solid #f5a62355;
+    border-radius: 4px;
+  }
+
+  /* ── Main layout ── */
+  .main {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 0 16px 60px;
+  }
+
+  /* ── Alert banner ── */
+  .new-banner {
+    background: #fff3cd;
+    border: 1px solid #ffc107;
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin: 16px 0;
+    font-size: 13px;
+    color: #856404;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .new-banner.hidden { display: none; }
+  .pulse {
+    width: 8px; height: 8px;
+    background: #dc3545;
+    border-radius: 50%;
+    flex-shrink: 0;
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+  }
+
+  /* ── Stats ── */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin: 16px 0;
+  }
+  .stat-card {
+    background: #fff;
+    border: 1px solid #e5e5e2;
+    border-radius: 10px;
+    padding: 12px 14px;
+    text-align: center;
+  }
+  .stat-num {
+    font-size: 26px;
+    font-weight: 700;
+    line-height: 1;
+    color: #1a1a18;
+  }
+  .stat-num.red { color: #dc3545; }
+  .stat-num.amber { color: #e67e00; }
+  .stat-label {
+    font-size: 11px;
+    color: #888;
+    margin-top: 4px;
+  }
+
+  /* ── Filters ── */
+  .filter-bar {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin: 12px 0 16px;
+  }
+  .chip {
+    font-size: 12px;
+    padding: 5px 12px;
+    border-radius: 100px;
+    border: 1px solid #ddd;
+    color: #555;
+    cursor: pointer;
+    background: #fff;
+    transition: all 0.15s;
+    user-select: none;
+  }
+  .chip:hover { border-color: #999; color: #333; }
+  .chip.active { background: #1a1a18; border-color: #1a1a18; color: #fff; }
+  .chip[data-filter="urgent"].active { background: #dc3545; border-color: #dc3545; }
+  .chip[data-filter="caution"].active { background: #e67e00; border-color: #e67e00; }
+
+  /* ── Cards ── */
+  .news-list { display: flex; flex-direction: column; gap: 8px; }
+
+  .card {
+    background: #fff;
+    border: 1px solid #e5e5e2;
+    border-radius: 10px;
+    padding: 14px 16px;
+    border-left-width: 4px;
+    transition: border-color 0.15s;
+  }
+  .card.urgent { border-left-color: #dc3545; }
+  .card.caution { border-left-color: #e67e00; }
+  .card.info    { border-left-color: #378add; }
+  .card.hidden  { display: none; }
+
+  .card:hover { border-color: #bbb; border-left-color: inherit; }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 7px;
+  }
+
+  .badge {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+  .badge-urgent  { background: #fff0f0; color: #c0392b; }
+  .badge-caution { background: #fff8e6; color: #b35900; }
+  .badge-info    { background: #e8f2fc; color: #1a5fa8; }
+  .badge-org {
+    background: #f5f5f3;
+    color: #666;
+    border: 1px solid #e5e5e2;
+    font-weight: 400;
+  }
+  .badge-new {
+    background: #dc3545;
+    color: #fff;
+    font-size: 10px;
+    padding: 1px 6px;
+    border-radius: 4px;
+  }
+
+  .card-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1a1a18;
+    margin-bottom: 6px;
+    line-height: 1.45;
+  }
+  .card-title a:hover { text-decoration: underline; }
+
+  .card-meta {
+    font-size: 12px;
+    color: #999;
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+
+  .card-summary {
+    font-size: 13px;
+    color: #555;
+    margin: 6px 0 0;
+    line-height: 1.5;
+    display: none;
+  }
+  .card.expanded .card-summary { display: block; }
+  .expand-btn {
+    background: none;
+    border: none;
+    font-size: 12px;
+    color: #999;
+    cursor: pointer;
+    padding: 4px 0 0;
+    text-decoration: underline dotted;
+  }
+  .expand-btn:hover { color: #555; }
+
+  /* ── Empty state ── */
+  .empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: #aaa;
+    font-size: 14px;
+    display: none;
+  }
+
+  /* ── Footer ── */
+  .site-footer {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 20px 16px;
+    font-size: 12px;
+    color: #aaa;
+    border-top: 1px solid #e5e5e2;
+  }
+
+  @media (max-width: 480px) {
+    .stats-row { grid-template-columns: repeat(3, 1fr); }
+    .stat-num { font-size: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <div class="site-name">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+        <path d="M8 1.5L1.5 13h13L8 1.5Z" stroke="#f5a623" stroke-width="1.5" stroke-linejoin="round"/>
+        <path d="M8 6v3.5" stroke="#f5a623" stroke-width="1.5" stroke-linecap="round"/>
+        <circle cx="8" cy="11" r="0.75" fill="#f5a623"/>
+      </svg>
+      マイナ保険証 インシデントウォッチ
+    </div>
+    <span class="site-desc">自治体・保険者・広域連合の公表情報とローカルニュースを自動収集</span>
+    <div class="header-right">
+      <a href="feed.xml" class="rss-link">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="#f5a623" aria-hidden="true">
+          <circle cx="2" cy="10" r="1.5"/>
+          <path d="M1 6.5a4.5 4.5 0 014.5 4.5" stroke="#f5a623" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+          <path d="M1 3a7 7 0 017 7" stroke="#f5a623" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+        </svg>
+        RSS
+      </a>
+    </div>
+  </div>
+</header>
+
+<main class="main">
+  <div class="new-banner hidden" id="newBanner">
+    <div class="pulse"></div>
+    <span id="newBannerText">新着アラートがあります</span>
+  </div>
+
+  <div class="stats-row" id="statsRow">
+    <div class="stat-card">
+      <div class="stat-num red" id="statToday">—</div>
+      <div class="stat-label">今日の新着</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num amber" id="statMonth">—</div>
+      <div class="stat-label">直近30日</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" id="statTotal">—</div>
+      <div class="stat-label">累計件数</div>
+    </div>
+  </div>
+
+  <div class="filter-bar" id="filterBar">
+    <div class="chip active" data-filter="all">すべて</div>
+    <div class="chip" data-filter="自治体">自治体</div>
+    <div class="chip" data-filter="保険者">保険者</div>
+    <div class="chip" data-filter="広域連合">広域連合</div>
+    <div class="chip" data-filter="報道">報道</div>
+    <div class="chip" data-filter="urgent">緊急のみ</div>
+  </div>
+
+  <div class="news-list" id="newsList"></div>
+  <div class="empty" id="emptyState">該当するニュースはありません</div>
+</main>
+
+<footer class="site-footer">
+  <span id="lastUpdated">読み込み中...</span> ·
+  本サイトはGoogle News RSSを自動収集し、編集者による確認を経て掲載しています。
+</footer>
+
+<script>
+const SEVERITY_LABEL = { urgent: '緊急', caution: '注意', info: '情報' };
+const SEVERITY_CLASS = { urgent: 'badge-urgent', caution: 'badge-caution', info: 'badge-info' };
+
+let allArticles = [];
+let currentFilter = 'all';
+
+function todayStr() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function isWithin30Days(dateStr) {
+  const d = new Date(dateStr);
+  const now = new Date();
+  return (now - d) / 86400000 <= 30;
+}
+
+function isNew(dateStr) {
+  const d = new Date(dateStr);
+  const now = new Date();
+  return (now - d) / 3600000 <= 48;
+}
+
+function renderStats(articles) {
+  const today = todayStr();
+  document.getElementById('statToday').textContent =
+    articles.filter(a => a.date === today).length;
+  document.getElementById('statMonth').textContent =
+    articles.filter(a => isWithin30Days(a.date)).length;
+  document.getElementById('statTotal').textContent = articles.length;
+}
+
+function renderCards(articles) {
+  const list = document.getElementById('newsList');
+  const empty = document.getElementById('emptyState');
+  list.innerHTML = '';
+
+  const filtered = currentFilter === 'all'
+    ? articles
+    : currentFilter === 'urgent'
+      ? articles.filter(a => a.severity === 'urgent')
+      : articles.filter(a => a.org_type === currentFilter);
+
+  empty.style.display = filtered.length === 0 ? 'block' : 'none';
+
+  filtered.forEach(article => {
+    const card = document.createElement('div');
+    card.className = `card ${article.severity}`;
+
+    const newBadge = isNew(article.date)
+      ? '<span class="badge badge-new">NEW</span>' : '';
+
+    const titleHtml = article.url
+      ? `<a href="${article.url}" target="_blank" rel="noopener">${article.title}</a>`
+      : article.title;
+
+    const summaryHtml = article.summary
+      ? `<div class="card-summary">${article.summary}</div>
+         <button class="expand-btn" onclick="toggleExpand(this)">▼ 詳細</button>`
+      : '';
+
+    card.innerHTML = `
+      <div class="card-header">
+        ${newBadge}
+        <span class="badge ${SEVERITY_CLASS[article.severity]}">${SEVERITY_LABEL[article.severity]}</span>
+        <span class="badge badge-org">${article.org_type}</span>
+        ${article.location ? `<span class="badge badge-org">${article.location}</span>` : ''}
+      </div>
+      <div class="card-title">${titleHtml}</div>
+      <div class="card-meta">
+        <span>${article.date}</span>
+        <span>${article.source}</span>
+      </div>
+      ${summaryHtml}
+    `;
+    list.appendChild(card);
+  });
+}
+
+function toggleExpand(btn) {
+  const card = btn.closest('.card');
+  const expanded = card.classList.toggle('expanded');
+  btn.textContent = expanded ? '▲ 閉じる' : '▼ 詳細';
+}
+
+function setupFilters() {
+  document.getElementById('filterBar').querySelectorAll('.chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      currentFilter = chip.dataset.filter;
+      renderCards(allArticles);
+    });
+  });
+}
+
+async function loadData() {
+  try {
+    const res = await fetch('data/articles.json?t=' + Date.now());
+    const data = await res.json();
+    allArticles = data.articles.sort((a, b) => b.date.localeCompare(a.date));
+
+    const newCount = allArticles.filter(a => isNew(a.date)).length;
+    const banner = document.getElementById('newBanner');
+    if (newCount > 0) {
+      banner.classList.remove('hidden');
+      document.getElementById('newBannerText').textContent =
+        `本日・昨日の新着アラート: ${newCount}件`;
+    }
+
+    renderStats(allArticles);
+    renderCards(allArticles);
+
+    const lu = new Date(data.last_updated);
+    document.getElementById('lastUpdated').textContent =
+      `最終更新: ${lu.toLocaleString('ja-JP', { timeZone: 'Asia/Tokyo' })}`;
+  } catch (e) {
+    document.getElementById('lastUpdated').textContent = 'データの読み込みに失敗しました';
+    console.error(e);
+  }
+}
+
+setupFilters();
+loadData();
+</script>
+</body>
+</html>
