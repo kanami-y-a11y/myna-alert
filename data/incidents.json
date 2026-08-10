@@ -1,9 +1,9 @@
 {
   "meta": {
-    "lastUpdated": "2026-08-10T13:00:00+09:00",
+    "lastUpdated": "2026-08-10T14:00:00+09:00",
     "version": "2.0",
-    "totalCount": 8,
-    "unresolvedCount": 7
+    "totalCount": 9,
+    "unresolvedCount": 8
   },
   "incidents": [
     {
@@ -274,85 +274,274 @@
     },
     {
       "id": "2026-akita-yuzawa-001",
-      "title": "（詳細収集中）湯沢市での事案",
+      "title": "後期高齢者医療制度における自己負担判定誤り（高額療養費・自己負担割合）",
       "orgName": "湯沢市",
       "orgType": "municipality",
       "prefecture": "秋田県",
       "municipality": "湯沢市",
-      "insuranceTypes": [],
-      "categories": [],
-      "status": "続報待ち",
+      "insuranceTypes": ["後期高齢者医療"],
+      "categories": ["後期高齢者医療", "負担割合", "限度額区分", "誤判定", "返金", "高額療養費"],
+      "status": "返金対応中",
       "occurredAt": null,
-      "firstPublishedAt": null,
+      "firstPublishedAt": "2026-07-17",
       "recoveredAt": null,
-      "lastUpdatedAt": "2026-08-10",
+      "lastUpdatedAt": "2026-07-17",
       "lastCheckedAt": "2026-08-10",
-      "summary": "詳細は収集中。内容を確認次第更新してください。",
-      "currentSituation": "詳細収集中",
-      "cause": null,
-      "confirmedFacts": [],
-      "uncertaintyNote": "事案の詳細は手動で入力が必要です。このエントリはプレースホルダです。",
+      "summary": "海外からの転入者について高額療養費等の自己負担限度額を誤判定（住民税非課税扱いで処理すべきでないのに非課税として処理）。また、19歳未満の世帯員の控除入力漏れにより自己負担割合を誤判定（1割とすべきものを2割と判定）。過大給付分の返還請求と差額分の療養費給付を実施する方針。",
+      "currentSituation": "対象者に対して限度額・負担割合の修正を行い、過大給付分の返還請求と差額給付を実施予定。再発防止策として判定作業手順の見直しと2名体制チェックを導入。",
+      "cause": "（誤判定1）海外からの転入者は住民税の課税区分によらず後期高齢者医療制度上は課税扱いとすべきところ、誤って住民税非課税として自己負担限度額等を判定した。（誤判定2）課税所得金額算定の際、19歳未満の世帯員の控除額を入力漏れし、自己負担割合を1割とすべきところ2割と判定した。",
+      "confirmedFacts": [
+        "海外転入者について自己負担限度額を誤判定：高額療養費6件78,976円・入院時食事療養費1件4,000円の過大給付",
+        "19歳未満世帯員控除入力漏れにより自己負担割合を誤判定：4件90,641円の差額給付が必要",
+        "過大給付分は地方自治法に基づき5年以内に返還請求予定",
+        "差額分は療養費として給付予定",
+        "再発防止策として判定作業の手順見直しと2名体制でのチェック体制を整備"
+      ],
+      "uncertaintyNote": "市のページ6471（2名）と6472（4名）で対象者数が異なる。6471は先行公表・6472は追加判明分の可能性があるが、重複の有無は公表情報では確認できない。",
       "potentialCount": null,
-      "confirmedCount": null,
-      "refund": { "exists": false, "count": null, "amount": null, "status": null },
-      "unresolvedItems": ["詳細確認"],
-      "updates": [],
-      "createdAt": "2026-08-10",
+      "confirmedCount": 8,
+      "refund": { "exists": true, "count": null, "amount": "過大給付分：計約127,746円相当（返還請求）／差額分：90,641円（療養費給付）", "status": "返還請求・差額給付を実施予定" },
+      "unresolvedItems": ["対象者への返還請求・差額給付の完了確認", "6471と6472の対象者の重複有無の確認"],
+      "updates": [
+        {
+          "id": "2026-akita-yuzawa-001-u001",
+          "type": "NEW",
+          "publishedAt": "2026-07-17",
+          "title": "海外転入者の自己負担限度額等誤判定（2名）を確認",
+          "summary": "海外からの転入者がいる世帯で、後期高齢者医療制度の高額療養費等の自己負担限度額が誤判定されていたことを確認。住民税非課税として処理すべきでない方を誤って非課税扱いとしたことが原因。高額療養費3件46,755円・食事療養費2件43,470円の過大給付が判明。返還請求と再発防止策を実施する。",
+          "diffFromPrevious": null,
+          "statusAfterUpdate": "返金対応中",
+          "newFacts": [
+            "2名の海外転入者について高額療養費等の自己負担限度額を誤判定",
+            "高額療養費3件46,755円・食事療養費2件43,470円の過大給付",
+            "5年以内に返還請求予定"
+          ],
+          "sources": [
+            {
+              "sourceType": "municipality",
+              "publisher": "湯沢市",
+              "title": "後期高齢者医療制度における高額療養費等の誤判定について",
+              "url": "https://www.city-yuzawa.jp/soshiki/19/6471.html",
+              "publishedAt": "2026-07-17",
+              "isPrimary": true,
+              "reliabilityLevel": 1
+            }
+          ]
+        },
+        {
+          "id": "2026-akita-yuzawa-001-u002",
+          "type": "COUNT",
+          "publishedAt": "2026-07-17",
+          "title": "追加確認：海外転入者4名・自己負担割合誤判定4名",
+          "summary": "海外転入者の誤判定として新たに4名（高額療養費6件78,976円・食事療養費1件4,000円）を確認。また別の誤判定として、19歳未満の世帯員の控除額を入力漏れし自己負担割合を2割と誤判定した事例が4名（4件90,641円の差額給付が必要）確認された。",
+          "diffFromPrevious": "先行公表の2名に加えて同種誤判定の追加4名が確認された。さらに別原因（19歳未満控除入力漏れ）による自己負担割合誤判定が4名判明した。",
+          "statusAfterUpdate": "返金対応中",
+          "newFacts": [
+            "海外転入者誤判定：4名で高額療養費6件78,976円・食事療養費1件4,000円の過大給付",
+            "自己負担割合誤判定（19歳未満控除入力漏れ）：4名で4件90,641円の差額給付が必要",
+            "差額分は療養費として給付予定"
+          ],
+          "sources": [
+            {
+              "sourceType": "municipality",
+              "publisher": "湯沢市",
+              "title": "後期高齢者医療制度における誤判定について（追加報告）",
+              "url": "https://www.city-yuzawa.jp/soshiki/19/6472.html",
+              "publishedAt": "2026-07-17",
+              "isPrimary": true,
+              "reliabilityLevel": 1
+            }
+          ]
+        }
+      ],
+      "createdAt": "2026-07-17",
       "updatedAt": "2026-08-10"
     },
     {
       "id": "2026-hokkaido-hakodate-001",
-      "title": "（詳細収集中）函館市での事案",
+      "title": "資格確認書の誤配による個人情報の漏えい",
       "orgName": "函館市",
       "orgType": "municipality",
       "prefecture": "北海道",
       "municipality": "函館市",
-      "insuranceTypes": [],
-      "categories": [],
-      "status": "続報待ち",
+      "insuranceTypes": ["マイナ保険証"],
+      "categories": ["資格確認書", "誤送付", "個人情報漏洩", "窓口業務影響"],
+      "status": "調査中",
       "occurredAt": null,
-      "firstPublishedAt": null,
+      "firstPublishedAt": "2026-07-27",
       "recoveredAt": null,
-      "lastUpdatedAt": "2026-08-10",
+      "lastUpdatedAt": "2026-07-27",
       "lastCheckedAt": "2026-08-10",
-      "summary": "詳細は収集中。内容を確認次第更新してください。",
-      "currentSituation": "詳細収集中",
+      "summary": "函館市市民部が2026年7月27日に公表。資格確認書が誤って別人に配達され、個人情報が漏えいした事案。",
+      "currentSituation": "函館市市民部より市議会常任委員会向けに報告済み。詳細な対象人数・原因・対応状況は公表PDF（市民部資料）に記載されているが、詳細は続報待ち。",
       "cause": null,
-      "confirmedFacts": [],
-      "uncertaintyNote": "事案の詳細は手動で入力が必要です。このエントリはプレースホルダです。",
+      "confirmedFacts": [
+        "2026年7月27日、函館市市民部が資格確認書の誤配による個人情報漏えいを公表",
+        "函館市議会常任委員会等参考資料として報告された"
+      ],
+      "uncertaintyNote": "対象人数・誤配の経緯・原因・対応状況の詳細は市議会向け資料（PDF）に記載されているが、現時点でテキスト形式での詳細確認が未完了。続報・詳細確認が必要。",
       "potentialCount": null,
       "confirmedCount": null,
       "refund": { "exists": false, "count": null, "amount": null, "status": null },
-      "unresolvedItems": ["詳細確認"],
-      "updates": [],
-      "createdAt": "2026-08-10",
+      "unresolvedItems": ["対象人数の確認", "誤配の原因確認", "対応状況・復旧確認", "再発防止策確認"],
+      "updates": [
+        {
+          "id": "2026-hokkaido-hakodate-001-u001",
+          "type": "NEW",
+          "publishedAt": "2026-07-27",
+          "title": "資格確認書の誤配による個人情報漏えいを公表",
+          "summary": "函館市市民部が市議会常任委員会向け参考資料として、資格確認書が誤って別人に配達され個人情報が漏えいした事案を報告。詳細は添付PDFに記載。",
+          "diffFromPrevious": null,
+          "statusAfterUpdate": "調査中",
+          "newFacts": [
+            "資格確認書の誤配による個人情報漏えいを函館市市民部が公表",
+            "市議会常任委員会向けに報告"
+          ],
+          "sources": [
+            {
+              "sourceType": "municipality",
+              "publisher": "函館市市民部",
+              "title": "資格確認書の誤配による個人情報の漏えいについて（令和8年7月27日 市民部常任委員会等参考資料）",
+              "url": "https://www.city.hakodate.hokkaido.jp/docs/2020102800061/file_contents/2026727shiminbu.pdf",
+              "publishedAt": "2026-07-27",
+              "isPrimary": true,
+              "reliabilityLevel": 1
+            }
+          ]
+        }
+      ],
+      "createdAt": "2026-07-27",
       "updatedAt": "2026-08-10"
     },
     {
       "id": "2026-hiroshima-kure-001",
-      "title": "（詳細収集中）呉市での事案",
+      "title": "住民登録の名字（苗字）を誤入力し健康保険記録等に誤りが生じた事案",
       "orgName": "呉市",
       "orgType": "municipality",
       "prefecture": "広島県",
       "municipality": "呉市",
-      "insuranceTypes": [],
-      "categories": [],
-      "status": "続報待ち",
+      "insuranceTypes": ["国民健康保険"],
+      "categories": ["誤登録", "住民登録", "資格情報の誤り"],
+      "status": "調査中",
       "occurredAt": null,
       "firstPublishedAt": null,
       "recoveredAt": null,
       "lastUpdatedAt": "2026-08-10",
       "lastCheckedAt": "2026-08-10",
-      "summary": "詳細は収集中。内容を確認次第更新してください。",
-      "currentSituation": "詳細収集中",
-      "cause": null,
-      "confirmedFacts": [],
-      "uncertaintyNote": "事案の詳細は手動で入力が必要です。このエントリはプレースホルダです。",
+      "summary": "住民登録の際に名字（苗字）が誤入力されたことにより、健康保険証・資格確認書等の記録に誤った氏名が登録された事案。中国新聞デジタルが報道。",
+      "currentSituation": "呉市が公式発表（112718.pdf）を公開。詳細な対象人数・原因・対応状況は発表文書に記載されているが、詳細は続報待ち。",
+      "cause": "住民登録時の名字入力ミス。住民票情報が健康保険記録と連動しているため、保険証等の記録に影響した。",
+      "confirmedFacts": [
+        "住民登録の名字が誤入力されていたことが判明",
+        "呉市が公式発表（112718.pdf）を公開",
+        "中国新聞デジタルが報道"
+      ],
+      "uncertaintyNote": "対象人数・具体的な誤入力の経緯・健康保険への影響範囲・対応状況の詳細は公表PDFに記載されているが、詳細確認が未完了。",
       "potentialCount": null,
       "confirmedCount": null,
       "refund": { "exists": false, "count": null, "amount": null, "status": null },
-      "unresolvedItems": ["詳細確認"],
-      "updates": [],
+      "unresolvedItems": ["対象人数の確認", "健康保険証・資格確認書への影響範囲確認", "再発防止策確認"],
+      "updates": [
+        {
+          "id": "2026-hiroshima-kure-001-u001",
+          "type": "NEW",
+          "publishedAt": null,
+          "title": "住民登録の名字を誤入力、健康保険記録等に誤りが生じた事案を公表",
+          "summary": "住民登録の際に名字が誤入力され、健康保険証・資格確認書等の記録に誤った氏名が登録された。中国新聞デジタルが報道し、呉市が公式文書（112718.pdf）を公開。",
+          "diffFromPrevious": null,
+          "statusAfterUpdate": "調査中",
+          "newFacts": [
+            "住民登録の名字誤入力が判明",
+            "健康保険記録等に誤りが生じた"
+          ],
+          "sources": [
+            {
+              "sourceType": "municipality",
+              "publisher": "呉市",
+              "title": "住民登録の名字誤入力について（112718.pdf）",
+              "url": "https://www.city.kure.lg.jp/uploaded/attachment/112718.pdf",
+              "publishedAt": null,
+              "isPrimary": true,
+              "reliabilityLevel": 1
+            },
+            {
+              "sourceType": "news_local",
+              "publisher": "中国新聞デジタル",
+              "title": "呉市、住民登録の名字を誤入力",
+              "url": "",
+              "publishedAt": null,
+              "isPrimary": false,
+              "reliabilityLevel": 3
+            }
+          ]
+        }
+      ],
+      "createdAt": "2026-08-10",
+      "updatedAt": "2026-08-10"
+    },
+    {
+      "id": "2026-fukuoka-kurume-002",
+      "title": "令和8年度国民健康保険資格確認書一斉発送で4,797人分の性別誤記載",
+      "orgName": "久留米市",
+      "orgType": "municipality",
+      "prefecture": "福岡県",
+      "municipality": "久留米市",
+      "insuranceTypes": ["国民健康保険"],
+      "categories": ["国民健康保険", "資格確認書", "誤記載", "誤送付"],
+      "status": "対応中",
+      "occurredAt": null,
+      "firstPublishedAt": "2026-08-01",
+      "recoveredAt": null,
+      "lastUpdatedAt": "2026-08-01",
+      "lastCheckedAt": "2026-08-10",
+      "summary": "令和8年度国民健康保険資格確認書の一斉発送において、4,797人分の資格確認書に性別が誤記載されていたことが判明。久留米市が「令和８年度　国民健康保険　資格確認書一斉発送に関するお詫びとお知らせ」として公表。西日本新聞が報道。",
+      "currentSituation": "久留米市が公表しお詫びを掲載。対応方法については公表文に記載されているが詳細は続報待ち。",
+      "cause": null,
+      "confirmedFacts": [
+        "令和8年度国民健康保険資格確認書の一斉発送で4,797人分の性別が誤記載",
+        "久留米市が公式にお詫びを発表",
+        "西日本新聞が「国保の資格確認書で4797人分の性別誤記載　久留米市」として報道"
+      ],
+      "uncertaintyNote": "誤記載の原因（システム起因か入力ミスか）・再送付の実施有無・対象者への連絡方法の詳細は続報待ち。",
+      "potentialCount": null,
+      "confirmedCount": 4797,
+      "refund": { "exists": false, "count": null, "amount": null, "status": null },
+      "unresolvedItems": ["誤記載の原因確認", "正しい資格確認書の再送付状況確認", "再発防止策確認"],
+      "updates": [
+        {
+          "id": "2026-fukuoka-kurume-002-u001",
+          "type": "NEW",
+          "publishedAt": "2026-08-01",
+          "title": "国民健康保険資格確認書4,797人分に性別誤記載、お詫びと対応を公表",
+          "summary": "令和8年度国民健康保険資格確認書の一斉発送において、4,797人分の性別が誤記載されていたことが判明。久留米市が公式にお詫びと対応内容を発表した。西日本新聞meが報道。",
+          "diffFromPrevious": null,
+          "statusAfterUpdate": "対応中",
+          "newFacts": [
+            "4,797人分の国民健康保険資格確認書に性別誤記載",
+            "久留米市が「令和８年度　国民健康保険　資格確認書一斉発送に関するお詫びとお知らせ」を公表"
+          ],
+          "sources": [
+            {
+              "sourceType": "municipality",
+              "publisher": "久留米市",
+              "title": "令和８年度　国民健康保険　資格確認書一斉発送に関するお詫びとお知らせ",
+              "url": "",
+              "publishedAt": "2026-08-01",
+              "isPrimary": true,
+              "reliabilityLevel": 1
+            },
+            {
+              "sourceType": "news_local",
+              "publisher": "西日本新聞me",
+              "title": "国保の資格確認書で4797人分の性別誤記載　久留米市",
+              "url": "",
+              "publishedAt": "2026-08-01",
+              "isPrimary": false,
+              "reliabilityLevel": 3
+            }
+          ]
+        }
+      ],
       "createdAt": "2026-08-10",
       "updatedAt": "2026-08-10"
     },

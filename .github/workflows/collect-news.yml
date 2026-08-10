@@ -2,10 +2,8 @@ name: Collect incidents and notify
 
 on:
   schedule:
-    # 毎日 8:00, 13:00, 18:00 JST (UTC 23:00 / 04:00 / 09:00)
+    # 毎日 8:00 JST (UTC 23:00 前日)
     - cron: "0 23 * * *"
-    - cron: "0 4 * * *"
-    - cron: "0 9 * * *"
   workflow_dispatch:
 
 jobs:
