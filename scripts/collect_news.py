@@ -14,15 +14,24 @@ Flow:
 import feedparser
 import json
 import hashlib
+import logging
+import os
 import sys
 import re
+import requests
 from pathlib import Path
 from datetime import datetime, timezone, timedelta
 from urllib.parse import quote
 
+logging.basicConfig(level=logging.INFO, format="%(message)s")
+
 JST = timezone(timedelta(hours=9))
 DATA_FILE = Path(__file__).parent.parent / "data" / "incidents.json"
 FEED_BASE = "https://news.google.com/rss/search?q={q}&hl=ja&gl=JP&ceid=JP:ja"
+
+# Bing Web Search API（公式サイトを含むウェブ全体を検索）
+BING_ENDPOINT = "https://api.bing.microsoft.com/v7.0/search"
+BING_API_KEY = os.environ.get("BING_API_KEY", "")
 
 # ── Google News search queries (横断的検索) ──────────────────────────────────
 QUERIES = [
@@ -55,10 +64,23 @@ QUERIES = [
     "健康保険 ミス お詫び OR 謝罪 OR 再送 自治体 OR 市区町村",
 ]
 
-# ── Additional RSS feeds (NHK等) ─────────────────────────────────────────────
+# ── Bing News RSS（無料・キーワード検索） ────────────────────────────────────
+BING_NEWS_BASE = "https://www.bing.com/news/search?q={q}&format=rss&setlang=ja-JP&cc=JP"
+
+# ── 固定 RSS フィード（省庁・メディア直接監視） ──────────────────────────────
 EXTRA_FEEDS: list[tuple[str, str]] = [
-    ("NHK社会・くらし", "https://www3.nhk.or.jp/rss/news/cat1.xml"),
-    ("NHK主要ニュース", "https://www3.nhk.or.jp/rss/news/cat0.xml"),
+    # NHK
+    ("NHK主要ニュース",   "https://www3.nhk.or.jp/rss/news/cat0.xml"),
+    ("NHK社会・くらし",   "https://www3.nhk.or.jp/rss/news/cat1.xml"),
+    ("NHK政治",          "https://www3.nhk.or.jp/rss/news/cat4.xml"),
+    # 省庁（公式発表を直接監視）
+    ("厚生労働省",        "https://www.mhlw.go.jp/stf/news.rdf"),
+    ("デジタル庁",        "https://www.digital.go.jp/rss/news.xml"),
+    ("総務省",            "https://www.soumu.go.jp/news.rdf"),
+    # 国内メディア
+    ("Yahoo!ニュース国内", "https://news.yahoo.co.jp/rss/topics/domestic.xml"),
+    ("時事通信",          "https://www.jiji.com/rss/ranking.rdf"),
+    ("毎日新聞",          "https://mainichi.jp/rss/etc/mainichi-flash.rss"),
 ]
 
 # ── Relevance detection ─────────────────────────────────────────────────────
@@ -223,6 +245,102 @@ def now_jst() -> str:
 def article_hash(title: str) -> str:
     return hashlib.md5(title.encode()).hexdigest()[:10]
 
+def fetch_bing(seen_hashes: set[str]) -> list[dict]:
+    """Bing Web Search で公式サイト含むウェブ全体を検索する。"""
+    if not BING_API_KEY:
+        logging.info("BING_API_KEY 未設定のためスキップ")
+        return []
+
+    results: list[dict] = []
+    headers = {"Ocp-Apim-Subscription-Key": BING_API_KEY}
+
+    for query in QUERIES:
+        try:
+            params = {
+                "q": query,
+                "mkt": "ja-JP",
+                "count": 10,
+                "freshness": "Month",
+                "textDecorations": False,
+            }
+            resp = requests.get(BING_ENDPOINT, headers=headers, params=params, timeout=15)
+            resp.raise_for_status()
+            data = resp.json()
+
+            # ウェブページ結果を処理
+            for item in data.get("webPages", {}).get("value", []):
+                title = item.get("name", "")
+                body = item.get("snippet", "")
+                url = item.get("url", "")
+                h = article_hash(title)
+                if h in seen_hashes:
+                    continue
+                seen_hashes.add(h)
+                if not is_relevant(title, body):
+                    continue
+                date_raw = item.get("dateLastCrawled", "")
+                try:
+                    dt = datetime.fromisoformat(date_raw[:19]).replace(tzinfo=JST)
+                except (ValueError, TypeError):
+                    dt = datetime.now(JST)
+                if (datetime.now(JST) - dt).days > 90:
+                    continue
+                org_name, org_type, pref = extract_org(title, body)
+                results.append({
+                    "_hash": h,
+                    "title": title,
+                    "body": body,
+                    "url": url,
+                    "date": dt.strftime("%Y-%m-%d"),
+                    "source_pub": "Bing Web Search",
+                    "org_name": org_name,
+                    "org_type": org_type,
+                    "prefecture": pref,
+                    "update_type": detect_update_type(title, body),
+                    "status": detect_status(title, body),
+                    "categories": detect_categories(title, body),
+                })
+
+            # ニュース結果も処理
+            for item in data.get("news", {}).get("value", []):
+                title = item.get("name", "")
+                body = item.get("description", "")
+                url = item.get("url", "")
+                h = article_hash(title)
+                if h in seen_hashes:
+                    continue
+                seen_hashes.add(h)
+                if not is_relevant(title, body):
+                    continue
+                date_raw = item.get("datePublished", "")
+                try:
+                    dt = datetime.fromisoformat(date_raw[:19]).replace(tzinfo=JST)
+                except (ValueError, TypeError):
+                    dt = datetime.now(JST)
+                if (datetime.now(JST) - dt).days > 90:
+                    continue
+                org_name, org_type, pref = extract_org(title, body)
+                results.append({
+                    "_hash": h,
+                    "title": title,
+                    "body": body,
+                    "url": url,
+                    "date": dt.strftime("%Y-%m-%d"),
+                    "source_pub": item.get("provider", [{}])[0].get("name", "Bing News"),
+                    "org_name": org_name,
+                    "org_type": org_type,
+                    "prefecture": pref,
+                    "update_type": detect_update_type(title, body),
+                    "status": detect_status(title, body),
+                    "categories": detect_categories(title, body),
+                })
+        except requests.RequestException as e:
+            logging.warning(f"  Bing 検索エラー ({query[:30]}): {e}")
+
+    logging.info(f"Bing: {len(results)} 件取得")
+    return results
+
+
 def _parse_feed_entries(
     feed: "feedparser.FeedParserDict",
     source_label: str,
@@ -269,7 +387,19 @@ def fetch_all() -> list[dict]:
     seen_hashes: set[str] = set()
     results: list[dict] = []
 
-    # Google News RSS (keyword-based searches)
+    # ① Bing Web Search API（有料オプション・BING_API_KEY設定時のみ）
+    results.extend(fetch_bing(seen_hashes))
+
+    # ② Bing News RSS（無料・キーワード検索）
+    for query in QUERIES:
+        url = BING_NEWS_BASE.format(q=quote(query))
+        try:
+            feed = feedparser.parse(url)
+            results.extend(_parse_feed_entries(feed, "Bing News", seen_hashes))
+        except Exception as e:
+            logging.warning(f"  Bing News RSS error ({query[:30]}): {e}")
+
+    # ③ Google News RSS（ニュース記事）
     for query in QUERIES:
         url = FEED_BASE.format(q=quote(query))
         try:
@@ -277,16 +407,17 @@ def fetch_all() -> list[dict]:
             pub_title = feed.feed.get("title", "Google News")
             results.extend(_parse_feed_entries(feed, pub_title, seen_hashes))
         except Exception as e:
-            print(f"  Google News fetch error ({query[:30]}): {e}", file=sys.stderr)
+            logging.warning(f"  Google News RSS error ({query[:30]}): {e}")
 
-    # Additional RSS feeds (NHK etc.)
+    # ④ 省庁・メディア 固定RSSフィード
     for feed_label, feed_url in EXTRA_FEEDS:
         try:
             feed = feedparser.parse(feed_url)
             results.extend(_parse_feed_entries(feed, feed_label, seen_hashes))
         except Exception as e:
-            print(f"  Extra feed error ({feed_label}): {e}", file=sys.stderr)
+            logging.warning(f"  Extra feed error ({feed_label}): {e}")
 
+    logging.info(f"合計取得: {len(results)} 件（重複除去済み）")
     return results
 
 
