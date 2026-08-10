@@ -72,6 +72,8 @@ button{font-family:inherit;cursor:pointer}
 .card-footer-badge{display:flex;align-items:center;gap:4px;font-size:12px;font-weight:500}
 .card-footer-badge.refund{color:#0f6e56}
 .card-footer-badge.unresolved{color:#b35900}
+.card-src-link{margin-left:auto;font-size:11px;color:#1a5fa8;text-decoration:none;white-space:nowrap;border:1px solid #c5d9f0;border-radius:4px;padding:2px 7px;transition:background .12s}
+.card-src-link:hover{background:#e8f2fc}
 
 /* ── Badges ── */
 .badge{font-size:11px;font-weight:600;padding:2px 7px;border-radius:4px;white-space:nowrap}
@@ -269,7 +271,19 @@ function latestUpdateType(inc) {
 
 function escHtml(s) {
   if (!s) return '';
-  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function getCardPrimaryUrl(inc) {
+  const updates = inc.updates || [];
+  for (let i = updates.length - 1; i >= 0; i--) {
+    const srcs = updates[i].sources || [];
+    const primary = srcs.find(s => s.isPrimary && s.url);
+    if (primary) return primary.url;
+    const any = srcs.find(s => s.url);
+    if (any) return any.url;
+  }
+  return null;
 }
 
 function statusBadge(status) {
@@ -359,6 +373,7 @@ function renderList() {
     const cats = (inc.categories||[]).slice(0,4);
     const moreCats = (inc.categories||[]).length - cats.length;
     const dateStr = inc.lastUpdatedAt || inc.firstPublishedAt || '';
+    const cardUrl = getCardPrimaryUrl(inc);
 
     const card = document.createElement('div');
     card.className = `card s-${escHtml(inc.status)}`;
@@ -382,6 +397,7 @@ function renderList() {
         ${inc.refund && inc.refund.exists ? `<span class="card-footer-badge refund">💰 返金あり</span>` : ''}
         ${inc.unresolvedItems && inc.unresolvedItems.length > 0 ? `<span class="card-footer-badge unresolved">⚠ 未解決 ${inc.unresolvedItems.length}項目</span>` : ''}
         ${inc.recoveredAt ? `<span style="color:#639922">✓ 復旧済</span>` : ''}
+        ${cardUrl ? `<a class="card-src-link" href="${escHtml(cardUrl)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()">→ 出典</a>` : ''}
       </div>
     `;
     card.addEventListener('click', () => showDetail(inc));

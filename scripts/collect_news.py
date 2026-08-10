@@ -24,8 +24,9 @@ JST = timezone(timedelta(hours=9))
 DATA_FILE = Path(__file__).parent.parent / "data" / "incidents.json"
 FEED_BASE = "https://news.google.com/rss/search?q={q}&hl=ja&gl=JP&ceid=JP:ja"
 
-# ── Search queries ──────────────────────────────────────────────────────────
+# ── Google News search queries (横断的検索) ──────────────────────────────────
 QUERIES = [
+    # 制度横断
     "マイナ保険証 ミス OR 不具合 OR エラー OR 誤り OR 誤表示 OR 誤交付",
     "マイナ保険証 漏洩 OR 漏えい OR 情報流出 OR 不正",
     "オンライン資格確認 障害 OR 停止 OR エラー OR 不具合",
@@ -41,6 +42,23 @@ QUERIES = [
     "広域連合 マイナ保険証 OR 後期高齢者 問題 OR トラブル",
     "協会けんぽ マイナ保険証 OR オンライン資格確認 障害 OR 不具合",
     "資格無効 誤表示 OR 無効表示 マイナ保険証",
+    # 追加クエリ（横断的カバレッジ拡充）
+    "被保険者情報 誤登録 OR 誤入力 OR 誤記載 ミス",
+    "マイナ保険証 別人 OR 他人 OR 誤認 OR 混同",
+    "保険証 廃止 ミス OR 混乱 OR 誤通知 OR 誤送付",
+    "後期高齢者 被保険者証 OR 資格確認書 ミス OR 誤交付",
+    "支払基金 障害 OR 不具合 OR エラー OR トラブル",
+    "国保連 OR 国民健康保険団体連合会 障害 OR 不具合 OR エラー",
+    "医療機関 オンライン資格確認 使えない OR 停止 OR エラー",
+    "性別 誤記載 OR 誤入力 OR 誤表示 保険証 OR 資格確認書",
+    "住所 OR 氏名 誤記載 OR 誤入力 保険証 OR 資格確認",
+    "健康保険 ミス お詫び OR 謝罪 OR 再送 自治体 OR 市区町村",
+]
+
+# ── Additional RSS feeds (NHK等) ─────────────────────────────────────────────
+EXTRA_FEEDS: list[tuple[str, str]] = [
+    ("NHK社会・くらし", "https://www3.nhk.or.jp/rss/news/cat1.xml"),
+    ("NHK主要ニュース", "https://www3.nhk.or.jp/rss/news/cat0.xml"),
 ]
 
 # ── Relevance detection ─────────────────────────────────────────────────────
@@ -205,49 +223,70 @@ def now_jst() -> str:
 def article_hash(title: str) -> str:
     return hashlib.md5(title.encode()).hexdigest()[:10]
 
+def _parse_feed_entries(
+    feed: "feedparser.FeedParserDict",
+    source_label: str,
+    seen_hashes: set[str],
+) -> list[dict]:
+    results = []
+    for entry in feed.entries:
+        title = entry.get("title", "")
+        body = entry.get("summary", "")
+        link = entry.get("link", "")
+        h = article_hash(title)
+        if h in seen_hashes:
+            continue
+        seen_hashes.add(h)
+        if not is_relevant(title, body):
+            continue
+        pub = entry.get("published_parsed")
+        if pub:
+            dt = datetime(*pub[:6], tzinfo=timezone.utc).astimezone(JST)
+        else:
+            dt = datetime.now(JST)
+        date_str = dt.strftime("%Y-%m-%d")
+        if (datetime.now(JST) - dt).days > 90:
+            continue
+        org_name, org_type, pref = extract_org(title, body)
+        results.append({
+            "_hash": h,
+            "title": title,
+            "body": body,
+            "url": link,
+            "date": date_str,
+            "source_pub": source_label,
+            "org_name": org_name,
+            "org_type": org_type,
+            "prefecture": pref,
+            "update_type": detect_update_type(title, body),
+            "status": detect_status(title, body),
+            "categories": detect_categories(title, body),
+        })
+    return results
+
+
 def fetch_all() -> list[dict]:
     seen_hashes: set[str] = set()
-    results = []
+    results: list[dict] = []
+
+    # Google News RSS (keyword-based searches)
     for query in QUERIES:
         url = FEED_BASE.format(q=quote(query))
         try:
             feed = feedparser.parse(url)
+            pub_title = feed.feed.get("title", "Google News")
+            results.extend(_parse_feed_entries(feed, pub_title, seen_hashes))
         except Exception as e:
-            print(f"  fetch error: {e}", file=sys.stderr)
-            continue
-        for entry in feed.entries:
-            title = entry.get("title", "")
-            body = entry.get("summary", "")
-            link = entry.get("link", "")
-            h = article_hash(title)
-            if h in seen_hashes:
-                continue
-            seen_hashes.add(h)
-            if not is_relevant(title, body):
-                continue
-            pub = entry.get("published_parsed")
-            if pub:
-                dt = datetime(*pub[:6], tzinfo=timezone.utc).astimezone(JST)
-            else:
-                dt = datetime.now(JST)
-            date_str = dt.strftime("%Y-%m-%d")
-            if (datetime.now(JST) - dt).days > 90:
-                continue
-            org_name, org_type, pref = extract_org(title, body)
-            results.append({
-                "_hash": h,
-                "title": title,
-                "body": body,
-                "url": link,
-                "date": date_str,
-                "source_pub": feed.feed.get("title", "Google News"),
-                "org_name": org_name,
-                "org_type": org_type,
-                "prefecture": pref,
-                "update_type": detect_update_type(title, body),
-                "status": detect_status(title, body),
-                "categories": detect_categories(title, body),
-            })
+            print(f"  Google News fetch error ({query[:30]}): {e}", file=sys.stderr)
+
+    # Additional RSS feeds (NHK etc.)
+    for feed_label, feed_url in EXTRA_FEEDS:
+        try:
+            feed = feedparser.parse(feed_url)
+            results.extend(_parse_feed_entries(feed, feed_label, seen_hashes))
+        except Exception as e:
+            print(f"  Extra feed error ({feed_label}): {e}", file=sys.stderr)
+
     return results
 
 
